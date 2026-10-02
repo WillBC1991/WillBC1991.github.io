@@ -4,7 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Wilfrido Becerril · Will</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌼</text></svg>">
+<meta name="description" content="Wilfrido Becerril, Líder de TI, Desarrollo y Mejora Continua en BSD SmartPayroll. Sistemas internos de RH, dashboards e integraciones con BioTime y Zoom Phone, automatización con Firebase e IA, y 15 certificaciones en proyectos, seguridad y nube.">
+<meta name="author" content="Wilfrido Becerril Arroyo">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://willbc1991.github.io/">
+<!-- Vista previa al compartir (WhatsApp, LinkedIn, Facebook, X) -->
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Will · Portafolio">
+<meta property="og:locale" content="es_MX">
+<meta property="og:url" content="https://willbc1991.github.io/">
+<meta property="og:title" content="Wilfrido Becerril · Líder de TI">
+<meta property="og:description" content="Sistemas internos, automatización e IA para la operación diaria. Proyectos, certificaciones y contacto.">
+<meta property="og:image" content="https://willbc1991.github.io/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wilfrido Becerril, Líder de TI, Desarrollo y Mejora Continua">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wilfrido Becerril · Líder de TI">
+<meta name="twitter:description" content="Sistemas internos, automatización e IA para la operación diaria.">
+<meta name="twitter:image" content="https://willbc1991.github.io/og.jpg">
+<!-- Ícono de pestaña -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Datos estructurados para buscadores -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Wilfrido Becerril Arroyo","alternateName":"Will Becerril",
+ "jobTitle":"Líder de TI, Desarrollo y Mejora Continua","worksFor":{"@type":"Organization","name":"BSD SmartPayroll"},
+ "url":"https://willbc1991.github.io/","image":"https://willbc1991.github.io/foto.jpg","email":"mailto:wbecerril@smartsupport.com.mx",
+ "alumniOf":{"@type":"CollegeOrUniversity","name":"Instituto Leonardo Bravo"},
+ "sameAs":["https://www.linkedin.com/in/wilfrido-becerril-arroyo","https://github.com/WillBC1991"],
+ "knowsAbout":["Firebase","JavaScript","Automatización de procesos","Inteligencia artificial","ISO/IEC 27001","ITIL 4","Dirección de proyectos","Infraestructura de TI"]}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Instrument+Sans:wght@400;500;600&family=Inter:wght@500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -396,6 +426,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 </style>
 </head>
 <body>
+<noscript>
+  <main style="max-width:640px;margin:48px auto;padding:0 20px;font-family:system-ui,sans-serif;line-height:1.6;color:#eef0fa">
+    <h1>Wilfrido Becerril</h1>
+    <p><strong>Líder de TI, Desarrollo y Mejora Continua</strong> en BSD SmartPayroll, México.</p>
+    <p>Construyo herramientas internas para la operación: portales de RH, dashboards, integraciones con BioTime y Zoom Phone, y automatizaciones con Firebase e IA.</p>
+    <p><a style="color:#f2b33d" href="cv-wilfrido-becerril.pdf">Descargar CV (PDF)</a> ·
+       <a style="color:#f2b33d" href="https://www.linkedin.com/in/wilfrido-becerril-arroyo">LinkedIn</a> ·
+       <a style="color:#f2b33d" href="https://github.com/WillBC1991">GitHub</a> ·
+       <a style="color:#f2b33d" href="mailto:wbecerril@smartsupport.com.mx">wbecerril@smartsupport.com.mx</a></p>
+    <p>Activa JavaScript para ver el portafolio completo.</p>
+  </main>
+</noscript>
 <div class="fondo" aria-hidden="true"><canvas id="nebulosa"></canvas><canvas id="estrellas"></canvas><div class="logo" id="logoFondo"></div></div>
 
 <!-- Bloqueo -->
@@ -489,6 +531,7 @@ const SERVICIOS = {
   goatcounter: "",   // tu código de goatcounter.com, p. ej. "willbc1991". Vacío = sin contador de visitas
 };
 
+const INICIO_TI = 2014;   // primer puesto en TI (Instituto Mexicano del Petróleo, abril 2014)
 const STACK = ["Firebase","Firestore","Firebase Auth","JavaScript","HTML / CSS","Google AI Studio","Gemini API","Zoom Phone API","BioTime API","Excel / SheetJS","Mejora continua","Documentación de procesos"];
 
 const PROYECTOS = [
@@ -711,9 +754,9 @@ function renderYo(el){
     <p>Construyo las herramientas internas con las que opera una empresa de servicios de nómina en ${PERFIL.ciudad}: portales de RH, dashboards, integraciones con sistemas biométricos y telefonía, y pequeñas utilidades que le ahorran horas al equipo.</p>
     <p>Me gusta encontrar el proceso que alguien hace a mano en Excel y convertirlo en algo que corre solo.</p>
     <div class="cifras">
+      <div><b>${new Date().getFullYear() - INICIO_TI}</b><span>Años en TI</span></div>
+      <div><b>${CERTIFICACIONES.length}</b><span>Certificaciones</span></div>
       <div><b>${PROYECTOS.length}</b><span>Sistemas internos</span></div>
-      <div><b>Firebase</b><span>Stack principal</span></div>
-      <div><b>Gemini</b><span>IA en el flujo de desarrollo</span></div>
     </div>
     <h4>Con qué trabajo</h4>
     <div class="chips">${STACK.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
@@ -1253,6 +1296,11 @@ bloqueo.focus();
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // 3 capas: lejanas se mueven poco, cercanas mucho
   const CAPAS = [{n:900,r:[.25,.6],p:6,a:.5},{n:380,r:[.5,1],p:18,a:.75},{n:90,r:[.9,1.7],p:40,a:.95}];
+  // Rendimiento: la cantidad de estrellas se ajusta al tamaño de pantalla (misma densidad visual)
+  // y en celulares/tabletas se dibuja a 30 cuadros por segundo para cuidar la batería.
+  const tactil = matchMedia('(pointer:coarse)').matches;
+  const MS_CUADRO = tactil ? 1000/30 : 0;
+  let ultimo = -1e9;
   let W, H, dpr, estrellas = [];
   const DERIVA = {vel:[2.5,6,13], dx:-1, dy:.35};  // px por segundo por capa y dirección
   let mx = 0, my = 0, cx = 0, cy = 0;   // objetivo y valor suavizado (-1..1)
@@ -1329,17 +1377,21 @@ bloqueo.focus();
   }
   generarNebulosa();
   function crear(){
-    dpr = Math.min(devicePixelRatio||1, 2);
+    dpr = Math.min(devicePixelRatio||1, tactil ? 1.5 : 2);
     W = cv.width = innerWidth*dpr; H = cv.height = innerHeight*dpr;
     estrellas = [];
-    CAPAS.forEach((c,i) => { for(let k=0;k<c.n;k++) estrellas.push({
+    const escala = Math.min(1, Math.max(.3, innerWidth*innerHeight / (1440*900)));
+    CAPAS.forEach((c,i) => { for(let k=0;k<Math.round(c.n*escala);k++) estrellas.push({
       x:Math.random()*W, y:Math.random()*H, r:(c.r[0]+Math.random()*(c.r[1]-c.r[0]))*dpr,
       capa:i, fase:Math.random()*6.28, vel:.6+Math.random()*1.6,
       tinte:'255,255,255' }); });
   }
   function cuadro(t){
+    if(t - ultimo < MS_CUADRO){ requestAnimationFrame(cuadro); return; }
+    ultimo = t;
     cx += (mx-cx)*.06; cy += (my-cy)*.06;
     ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#fff';
     for(const s of estrellas){
       const c = CAPAS[s.capa], m = c.p*dpr;
       // deriva constante: las capas cercanas avanzan más rápido (efecto de viaje)
@@ -1347,10 +1399,11 @@ bloqueo.focus();
       let x = (s.x - cx*m + d*DERIVA.dx) % W, y = (s.y - cy*m + d*DERIVA.dy) % H;
       if(x<0) x+=W; if(y<0) y+=H;
       const brillo = c.a*(.65+.35*Math.sin(t/1000*s.vel+s.fase));
-      ctx.beginPath(); ctx.arc(x,y,s.r,0,6.283);
-      ctx.fillStyle = `rgba(${s.tinte},${brillo})`; ctx.fill();
-      if(s.capa===2){ ctx.beginPath(); ctx.arc(x,y,s.r*3,0,6.283); ctx.fillStyle=`rgba(${s.tinte},${brillo*.08})`; ctx.fill(); }
+      ctx.globalAlpha = brillo;   // más rápido que crear un color rgba() por estrella
+      ctx.beginPath(); ctx.arc(x,y,s.r,0,6.283); ctx.fill();
+      if(s.capa===2){ ctx.globalAlpha = brillo*.08; ctx.beginPath(); ctx.arc(x,y,s.r*3,0,6.283); ctx.fill(); }
     }
+    ctx.globalAlpha = 1;
     if(!quieto) dibujarCometa(t);
     nb.style.transform = `translate(${-cx*12}px, ${-cy*12}px) scale(${1+.015*Math.sin(t/9000)})`;
     logo.style.transform = `translate(calc(-50% + ${-cx*14}px), calc(-50% + ${-cy*14}px))`;
