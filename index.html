@@ -277,8 +277,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .filtro small{opacity:.55;margin-left:4px}
 .certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .cert{display:flex;align-items:center;gap:16px;width:100%;padding:16px;text-align:left;border-radius:14px;
-  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);transition:border-color .15s, transform .15s}
-@media (hover:hover){ .cert:hover{border-color:rgba(255,255,255,.22);transform:translateY(-1px)} }
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);transition:border-color .2s, box-shadow .2s, transform .2s}
+@media (hover:hover){ .cert:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--c) 45%,transparent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 30%,transparent), 0 10px 30px -12px color-mix(in srgb,var(--c) 45%,transparent)} }
 .insignia{width:72px;height:72px;flex-shrink:0;display:grid;place-items:center}
 .insignia img,.insignia svg{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6))}
 .cert .txt{min-width:0;font-family:"Inter",var(--body)}
@@ -313,8 +314,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .cert-modal dd.mono{font-family:var(--mono);font-size:.76rem;word-break:break-all}
 .cert-modal .acciones{display:flex;gap:10px;justify-content:center}
 .cert-modal .acciones a,.cert-modal .acciones button{min-width:120px;padding:10px 18px;border-radius:10px;font-size:.88rem;font-weight:600;text-decoration:none}
-.cert-modal .verificar{background:#eef0f4;color:#111214}
-.cert-modal .verificar:hover{background:#fff}
+.cert-modal .verificar{background:var(--c-verificar,#eef0f4);color:var(--t-verificar,#111214)}
+.cert-modal .verificar:hover{filter:brightness(1.1)}
 .cert-modal .cerrar-detalle{border:1px solid rgba(255,255,255,.16);color:#dfe1e6}
 .cert-modal .cerrar-detalle:hover{background:rgba(255,255,255,.08)}
 @media (max-width:720px){
@@ -537,8 +538,22 @@ const TEMAS = {
 };
 // fecha y vigencia: "AAAA-MM". badge: PNG en img/badges/ (si no existe se muestra un marcador gris).
 // verificar: URL pública de la credencial (Credly, Accredible, etc.). forma: "hex" | "escudo" | "circulo".
+// Color de marca por emisor. Los marcados como "aproximado" no son oficiales y se pueden ajustar.
+// Se busca primero por c.emisor y luego por c.institucion; sin coincidencia = gris neutro.
+const COLORES_EMISOR = {
+  "Amazon Web Services": "#FF9900",
+  "Microsoft": "#0078D4",
+  "Google Actívate": "#4285F4",
+  "Santander Open Academy": "#EC0000",
+  "Udemy": "#A435F0",
+  "6sigmastudy": "#F5C518",
+  "PMI": "#7B4FD6",          // aproximado
+  "PeopleCert": "#8A5CC2",   // aproximado
+  "Cert Join": "#3A8FD9",    // aproximado
+  "SCRUMstudy": "#F26B21",   // aproximado
+};
 const CERTIFICACIONES = [
-  {titulo:"Profesional en Dirección de Proyectos (PMP)", institucion:"Certificación profesional", tema:"proyectos", fecha:"2025-08", vigencia:"2032-12", id:"23EREWWERJR", badge:"img/badges/pmp.png", verificar:"", forma:"hex", siglas:"PMP", destacada:"PMP · Dirección de Proyectos"},
+  {titulo:"Profesional en Dirección de Proyectos (PMP)", institucion:"Certificación profesional", emisor:"PMI", tema:"proyectos", fecha:"2025-08", vigencia:"2032-12", id:"23EREWWERJR", badge:"img/badges/pmp.png", verificar:"", forma:"hex", siglas:"PMP", destacada:"PMP · Dirección de Proyectos"},
   {titulo:"AWS Certified Cloud Practitioner", institucion:"Amazon Web Services", tema:"nube", fecha:"2025-09", badge:"img/badges/aws-cloud-practitioner.png", verificar:"", forma:"hex", siglas:"AWS", destacada:"AWS Cloud Practitioner"},
   {titulo:"ISO/IEC 27001:2022 Lead Auditor", institucion:"Cert Join", tema:"seguridad", fecha:"2024-07", id:"JDANRMBKHZ", badge:"img/badges/iso27001-lead-auditor.png", verificar:"", forma:"escudo", siglas:"ISO", destacada:"ISO/IEC 27001 Lead Auditor"},
   {titulo:"ISO/IEC 27001 Implementer", institucion:"Cert Join", tema:"seguridad", fecha:"2024-07", id:"8C4WIYAJLS", badge:"img/badges/iso27001-implementer.png", verificar:"", forma:"escudo", siglas:"ISO", destacada:"ISO/IEC 27001 Implementer"},
@@ -547,7 +562,7 @@ const CERTIFICACIONES = [
   {titulo:"ITIL 4 Foundation", institucion:"PeopleCert", tema:"ti", fecha:"2019-11", id:"GR671089589WB", badge:"img/badges/itil4-foundation.png", verificar:"", forma:"circulo", siglas:"ITIL", destacada:"ITIL 4 Foundation"},
   {titulo:"Scrum Fundamentals Certified (SFC)", institucion:"SCRUMstudy", tema:"proyectos", fecha:"2024-07", id:"1041822", badge:"img/badges/scrum-fundamentals.png", verificar:"", forma:"circulo", siglas:"SFC", destacada:"Scrum Fundamentals (SFC)"},
   {titulo:"Six Sigma Yellow Belt (SSYB)", institucion:"6sigmastudy", tema:"ti", fecha:"2024-07", id:"893516", badge:"img/badges/six-sigma-yellow-belt.png", verificar:"", forma:"circulo", siglas:"SSYB", destacada:"Six Sigma Yellow Belt"},
-  {titulo:"Cognitive Project Management in AI (CPMAI)", institucion:"Introducción · en español", tema:"ia", fecha:"2025-08", vigencia:"2034-10", badge:"img/badges/cpmai.png", verificar:"", forma:"hex", siglas:"CPMAI", destacada:"CPMAI · Gestión de proyectos de IA"},
+  {titulo:"Cognitive Project Management in AI (CPMAI)", institucion:"Introducción · en español", emisor:"PMI", tema:"ia", fecha:"2025-08", vigencia:"2034-10", badge:"img/badges/cpmai.png", verificar:"", forma:"hex", siglas:"CPMAI", destacada:"CPMAI · Gestión de proyectos de IA"},
   {titulo:"ANBAH Essentials with IA", institucion:"Certificación en IA", tema:"ia", fecha:"2025-08", vigencia:"2028-11", id:"1097187", badge:"img/badges/anbah-essentials.png", verificar:"", forma:"escudo", siglas:"ANB"},
   {titulo:"Automatiza procesos, analiza datos y desarrolla aplicaciones con Power Platform y Teams", institucion:"Net4skills", tema:"ia", fecha:"2025-11", id:"350404940", badge:"img/badges/power-platform-teams.png", verificar:"", forma:"circulo", siglas:"PP"},
   {titulo:"Google: Inteligencia Artificial y Productividad", institucion:"Santander Open Academy", tema:"ia", fecha:"2024-06", id:"OA-2024-0710000018997", badge:"img/badges/google-ia-productividad.png", verificar:"", forma:"circulo", siglas:"IA"},
@@ -750,16 +765,29 @@ function renderProyectos(el){
 }
 
 /* Insignia: imagen oficial si existe; si no (o si no carga), marcador gris con la forma y las siglas */
+const colorEmisor = c => COLORES_EMISOR[c.emisor] || COLORES_EMISOR[c.institucion] || null;
+// Texto blanco si contrasta lo suficiente (WCAG 4.5:1); si no, negro (amarillos y naranjas)
+function textoSobre(hex){
+  const [r, g, b] = [1, 3, 5].map(k => { const v = parseInt(hex.slice(k, k + 2), 16) / 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; });
+  const L = .2126 * r + .7152 * g + .0722 * b;
+  return 1.05 / (L + .05) >= 4.5 ? '#ffffff' : '#111214';
+}
 function marcadorSVG(c){
   const formas = {
     hex:'<polygon points="50,5 91,28 91,72 50,95 9,72 9,28"/>',
     escudo:'<path d="M50 5 89 17v31c0 24-17 40-39 47C28 88 11 72 11 48V17z"/>',
     circulo:'<circle cx="50" cy="50" r="44"/>',
   };
+  const forma = formas[c.forma] ? c.forma : 'circulo', col = colorEmisor(c);
+  const relleno = col ? `color-mix(in srgb, ${col} 18%, #111214)` : '#26282d';
+  const borde   = col || '#4a4d55';
+  const anillo  = col ? `color-mix(in srgb, ${col} 35%, transparent)` : '#3a3c42';
+  const siglas  = col || '#e7e8ee';
   const t = (c.siglas || '').length, tam = t <= 3 ? 22 : t === 4 ? 18 : 15;
   return `<svg viewBox="0 0 100 100" role="img" aria-label="${esc(c.siglas || c.titulo)}">
-    <g fill="#26282d" stroke="#4a4d55" stroke-width="3">${formas[c.forma] || formas.circulo}</g>
-    <text x="50" y="50" dy=".35em" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="600" font-size="${tam}" fill="#8b8e96">${esc(c.siglas || '')}</text></svg>`;
+    <g style="fill:${relleno};stroke:${borde};stroke-width:2.5">${formas[forma]}</g>
+    <g transform="translate(50 50) scale(.8) translate(-50 -50)" style="fill:none;stroke:${anillo};stroke-width:${1.5 / .8}${forma === 'circulo' ? ';stroke-dasharray:3 4' : ''}">${formas[forma]}</g>
+    <text x="50" y="50" dy=".35em" text-anchor="middle" style="fill:${siglas};font-family:'JetBrains Mono',monospace;font-weight:600;font-size:${tam}px">${esc(c.siglas || '')}</text></svg>`;
 }
 function insigniaHTML(c){
   return `<span class="insignia">${c.badge
@@ -791,7 +819,7 @@ function renderCertificaciones(el){
     const q = input.value.trim().toLowerCase();
     const rc = certs.filter(c => coincide(c, q)), rk = cursos.filter(c => coincide(c, q));
     el.querySelector('.certs').innerHTML = rc.map(c => `
-      <button class="cert" data-i="${CERTIFICACIONES.indexOf(c)}" aria-label="Ver detalle: ${esc(c.titulo)}">
+      <button class="cert" style="--c:${colorEmisor(c) || '#4a4d55'}" data-i="${CERTIFICACIONES.indexOf(c)}" aria-label="Ver detalle: ${esc(c.titulo)}">
         ${insigniaHTML(c)}
         <span class="txt"><b>${c.titulo}</b><span class="inst">${c.institucion}</span>
           <span class="fecha">${fechaCorta(c.fecha)}${c.vigencia ? ` · Vigente a ${fechaCorta(c.vigencia)}` : ''}</span>
@@ -832,7 +860,7 @@ function abrirDetalleCert(c, origen){
       <div><dt>ID de credencial</dt><dd class="mono">${c.id || '—'}</dd></div>
     </dl>
     <div class="acciones">
-      ${c.verificar ? `<a class="verificar" href="${c.verificar}" target="_blank" rel="noopener">Verificar ↗</a>` : ''}
+      ${c.verificar ? `<a class="verificar" href="${c.verificar}" target="_blank" rel="noopener"${colorEmisor(c) ? ` style="--c-verificar:${colorEmisor(c)};--t-verificar:${textoSobre(colorEmisor(c))}"` : ''}>Verificar ↗</a>` : ''}
       <button class="cerrar-detalle" type="button">Cerrar</button>
     </div>`;
   velo.querySelector('.cerrar-detalle').onclick = cerrarDetalleCert;
