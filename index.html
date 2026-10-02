@@ -273,6 +273,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .campo label{font-size:.82rem;color:var(--tenue)}
 .campo input,.campo textarea{padding:10px 12px;border-radius:10px;border:1px solid var(--linea);background:rgba(0,0,0,.25);color:var(--texto);font:inherit;font-size:.92rem;resize:vertical}
 .enlaces{display:flex;gap:10px;flex-wrap:wrap;margin:1.2rem 0 1.8rem}
+.campo input:focus,.campo textarea:focus{outline:none;border-color:rgba(242,179,61,.6)}
+.campo input:user-invalid,.campo textarea:user-invalid{border-color:var(--rosa)}
+.campo .op{color:var(--tenue);opacity:.7}
+.trampa{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}   /* campo anti-spam, invisible */
+.boton:disabled{opacity:.6;cursor:default}
+.envio{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.resultado{font-size:.85rem;line-height:1.45;margin:0}
+.resultado.ok{color:var(--jade)}
+.resultado.err{color:var(--rosa)}
+.enviado{padding:28px 22px;border:1px solid rgba(63,182,139,.35);border-radius:12px;background:rgba(63,182,139,.07);text-align:center}
+.enviado b{display:block;font-family:var(--display);font-size:1.25rem;margin-bottom:6px}
+.enviado p{margin:0 auto 16px!important}
 
 /* Terminal */
 .terminal{background:#050505;font-family:var(--mono);font-size:.85rem;line-height:1.6;padding:16px 18px;color:#cfd5f1}
@@ -408,9 +420,15 @@ const PERFIL = {
   empresa: "BSD SmartPayroll",
   ciudad: "México",
   foto: "foto.jpg",                         // ruta o URL de tu foto; vacío = iniciales
-  correo: "tu-correo@ejemplo.com",          // cámbialo
+  correo: "wbecerril@smartsupport.com.mx",
   linkedin: "https://www.linkedin.com/in/tu-usuario", // cámbialo
-  github: "https://github.com/tu-usuario",            // cámbialo
+  github: "https://github.com/WillBC1991",
+};
+
+/* Servicios externos (déjalos vacíos para desactivarlos) */
+const SERVICIOS = {
+  formspree: "",     // ID del formulario en formspree.io, p. ej. "xkgwabcd". Vacío = el botón abre el correo del visitante
+  goatcounter: "",   // tu código de goatcounter.com, p. ej. "willbc1991". Vacío = sin contador de visitas
 };
 
 const STACK = ["Firebase","Firestore","Firebase Auth","JavaScript","HTML / CSS","Google AI Studio","Gemini API","Zoom Phone API","BioTime API","Excel / SheetJS","Mejora continua","Documentación de procesos"];
@@ -487,6 +505,7 @@ let zTop = 10, cascada = 0;
 function abrir(id){
   const app = APPS[id]; if(!app) return;
   cerrarMenu();
+  if(!abiertas[id] && !restaurando) contar('app/' + id, 'Abrió ' + app.titulo);
   if(abiertas[id]){ const v = abiertas[id]; v.classList.remove('min'); enfocar(v); return v; }
   const v = document.createElement('section');
   v.className = 'ventana' + (esTabletaVertical() ? ' max' : '');   // en tableta vertical se abren maximizadas
@@ -608,6 +627,7 @@ function renderProyectos(el){
   }
   function detalle(id){
     const p = PROYECTOS.find(x => x.id === id);
+    contar('proyecto/' + id, p.nombre);
     atras.disabled = false;
     pag.innerHTML = `<div class="detalle">${mock(p)}<h3>${p.nombre}</h3><p class="sub">${p.corto}</p>
       <p>${p.texto}</p><h4>Tecnología</h4><div class="chips">${p.tech.map(t=>`<span class="chip">${t}</span>`).join('')}</div></div>`;
@@ -635,12 +655,38 @@ function renderContacto(el){
       <a class="boton sec" href="${PERFIL.linkedin}" target="_blank" rel="noopener">LinkedIn</a>
       <a class="boton sec" href="${PERFIL.github}" target="_blank" rel="noopener">GitHub</a>
     </div>
-    <div class="campo"><label for="cn">Tu nombre</label><input id="cn" autocomplete="name"></div>
-    <div class="campo"><label for="cm">Mensaje</label><textarea id="cm" rows="5"></textarea></div>
-    <button class="boton" id="enviar">Abrir en mi correo</button>`;
-  el.querySelector('#enviar').onclick = () => {
-    const n = el.querySelector('#cn').value.trim(), m = el.querySelector('#cm').value.trim();
-    location.href = `mailto:${PERFIL.correo}?subject=${encodeURIComponent('Contacto desde tu portafolio' + (n?' — '+n:''))}&body=${encodeURIComponent(m)}`;
+    <form id="formContacto" novalidate>
+      <div class="campo"><label for="cn">Tu nombre</label><input id="cn" name="nombre" autocomplete="name" required maxlength="100"></div>
+      <div class="campo"><label for="ce">Tu correo <span class="op">(para responderte)</span></label><input id="ce" name="email" type="email" autocomplete="email" required maxlength="150"></div>
+      <div class="campo"><label for="cm">Mensaje</label><textarea id="cm" name="mensaje" rows="5" required maxlength="5000"></textarea></div>
+      <div class="trampa" aria-hidden="true"><input name="_gotcha" tabindex="-1" autocomplete="off"></div>
+      <div class="envio"><button class="boton" id="enviar" type="submit">${SERVICIOS.formspree ? 'Enviar mensaje' : 'Abrir en mi correo'}</button>
+        <p class="resultado" id="resultado" role="status" aria-live="polite"></p></div>
+    </form>`;
+  const form = el.querySelector('#formContacto'), boton = el.querySelector('#enviar'), res = el.querySelector('#resultado');
+  const aviso = (txt, tipo) => { res.textContent = txt; res.className = 'resultado ' + (tipo || ''); };
+  const mailto = (n, m) => `mailto:${PERFIL.correo}?subject=${encodeURIComponent('Contacto desde tu portafolio' + (n ? ' — ' + n : ''))}&body=${encodeURIComponent(m)}`;
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const n = form.nombre.value.trim(), c = form.email.value.trim(), m = form.mensaje.value.trim();
+    if(!n || !m){ aviso('Escribe tu nombre y tu mensaje.', 'err'); (n ? form.mensaje : form.nombre).focus(); return; }
+    if(!SERVICIOS.formspree){ location.href = mailto(n, m); return; }
+    if(!form.email.checkValidity() || !c){ aviso('Escribe un correo válido para poder responderte.', 'err'); form.email.focus(); return; }
+    boton.disabled = true; boton.textContent = 'Enviando…'; aviso('');
+    try {
+      const r = await fetch(`https://formspree.io/f/${SERVICIOS.formspree}`, {
+        method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
+      if(!r.ok) throw new Error(r.status);
+      contar('contacto/enviado', 'Mensaje enviado');
+      form.outerHTML = `<div class="enviado"><b>¡Mensaje enviado! ✉️</b>
+        <p>Gracias, ${esc(n)}. Te respondo a <strong>${esc(c)}</strong> lo antes posible.</p>
+        <button class="boton sec" id="otro">Enviar otro mensaje</button></div>`;
+      el.querySelector('#otro').onclick = () => renderContacto(el);
+    } catch(err){
+      boton.disabled = false; boton.textContent = 'Reintentar';
+      res.className = 'resultado err';
+      res.innerHTML = `No se pudo enviar. Revisa tu conexión o <a href="${mailto(n, m)}" style="color:inherit">escríbeme por correo</a>.`;
+    }
   };
 }
 
@@ -680,6 +726,20 @@ function renderTerminal(el){
 const leer = k => { try { return localStorage.getItem(k); } catch(e){ return null; } };
 const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch(e){} };
 const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* Contador de visitas (GoatCounter: sin cookies y sin datos personales) */
+const contarVisitas = SERVICIOS.goatcounter && location.protocol !== 'file:';   // tus pruebas locales no cuentan
+if(contarVisitas){
+  const sc = document.createElement('script');
+  sc.async = true; sc.src = 'https://gc.zgo.at/count.js';
+  sc.dataset.goatcounter = `https://${SERVICIOS.goatcounter}.goatcounter.com/count`;
+  document.head.appendChild(sc);
+}
+// Registra qué apps y proyectos abren los visitantes (aparecen como "eventos" en GoatCounter)
+function contar(ruta, titulo){
+  if(!contarVisitas) return;
+  try { window.goatcounter?.count?.({ path: ruta, title: titulo, event: true }); } catch(e){}
+}
 
 /* Recordar ventanas abiertas entre visitas */
 let restaurando = false;
