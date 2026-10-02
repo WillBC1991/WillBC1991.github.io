@@ -407,7 +407,7 @@ const PERFIL = {
   puesto: "Líder de TI, Desarrollo y Mejora Continua",
   empresa: "BSD SmartPayroll",
   ciudad: "México",
-  foto: "",                                 // URL o data: de tu foto; vacío = iniciales
+  foto: "foto.jpg",                         // ruta o URL de tu foto; vacío = iniciales
   correo: "tu-correo@ejemplo.com",          // cámbialo
   linkedin: "https://www.linkedin.com/in/tu-usuario", // cámbialo
   github: "https://github.com/tu-usuario",            // cámbialo
@@ -563,7 +563,7 @@ document.querySelectorAll('.icono').forEach(b => b.onclick = () => abrir(b.datas
 /* ================= Render de cada app ================= */
 function renderYo(el){
   el.innerHTML = `
-    <div class="perfil"><div class="avatar" data-avatar>WB</div>
+    <div class="perfil"><div class="avatar" data-avatar>${avatarHTML()}</div>
       <div><h3>${PERFIL.nombre}</h3><p class="sub" style="margin:0">${PERFIL.puesto} en ${PERFIL.empresa}</p></div></div>
     <p>Construyo las herramientas internas con las que opera una empresa de servicios de nómina en ${PERFIL.ciudad}: portales de RH, dashboards, integraciones con sistemas biométricos y telefonía, y pequeñas utilidades que le ahorran horas al equipo.</p>
     <p>Me gusta encontrar el proceso que alguien hace a mano en Excel y convertirlo en algo que corre solo.</p>
@@ -828,10 +828,9 @@ const escritorio = document.getElementById('escritorio');
 let estado = 'bloqueo', timers = [];
 const limpiarTimers = () => { timers.forEach(clearTimeout); timers = []; };
 
+const avatarHTML = () => PERFIL.foto ? `<img src="${PERFIL.foto}" alt="">` : 'WB';
 function pintarAvatares(){
-  document.querySelectorAll('[data-avatar]').forEach(a => {
-    a.innerHTML = PERFIL.foto ? `<img src="${PERFIL.foto}" alt="">` : 'WB';
-  });
+  document.querySelectorAll('[data-avatar]').forEach(a => a.innerHTML = avatarHTML());
 }
 
 function desbloquear(){
