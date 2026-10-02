@@ -268,6 +268,24 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .boton{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;background:var(--cempasuchil);color:var(--noche);font-weight:600;text-decoration:none;font-size:.9rem}
 .boton.sec{background:rgba(255,255,255,.07);color:var(--texto);border:1px solid var(--linea)}
 
+/* Certificaciones */
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin:1.1rem 0 .4rem}
+.filtro{padding:6px 12px;border-radius:999px;border:1px solid var(--linea);font-size:.8rem;color:#dfe2f3;background:rgba(255,255,255,.03)}
+.filtro:hover{background:rgba(255,255,255,.08)}
+.filtro[aria-pressed="true"]{background:var(--cempasuchil);border-color:transparent;color:var(--noche);font-weight:600}
+.filtro small{opacity:.65;margin-left:4px}
+.certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:1rem}
+.cert{display:flex;gap:12px;padding:14px;border-radius:12px;border:1px solid var(--linea);background:rgba(255,255,255,.03)}
+.cert .sello{width:40px;height:40px;flex-shrink:0;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c)}
+.cert .sello svg{width:22px;height:22px}
+.cert .txt{min-width:0}
+.cert b{display:block;font-size:.9rem;font-weight:600;line-height:1.3}
+.cert .emisor{display:block;font-size:.8rem;color:var(--tenue);margin-top:2px}
+.cert .meta{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:.74rem;color:var(--tenue)}
+.cert .tipo{color:var(--c);font-weight:600}
+.cert .id{font-family:var(--mono);font-size:.7rem;word-break:break-all}
+.ver-todas{margin-top:12px}
+
 /* Contacto */
 .campo{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .campo label{font-size:.82rem;color:var(--tenue)}
@@ -472,12 +490,49 @@ const FORMACION = [
   {titulo:"Técnico en Mantenimiento Preventivo y Correctivo", lugar:"CETIS 33", periodo:"2006 – 2010"},
 ];
 
-const CERTIFICACIONES = ["PMP · Dirección de Proyectos","AWS Cloud Practitioner","ISO/IEC 27001 Lead Auditor","ISO/IEC 27001 Implementer","ISO/IEC 27001 Internal Auditor","ITIL 4 Foundation","Scrum Fundamentals (SFC)","Six Sigma Yellow Belt","CPMAI · Gestión de proyectos de IA","Microsoft Power Automate","Cisco CCNA"];
+// Certificaciones, diplomados y cursos (fecha "AAAA-MM"; vence e id son opcionales)
+const TEMAS = {
+  proyectos:{nombre:"Proyectos", color:"#6c8cff"},
+  seguridad:{nombre:"Seguridad", color:"#e8657a"},
+  nube:{nombre:"Nube", color:"#2fb3c7"},
+  ia:{nombre:"IA y automatización", color:"#9b7bea"},
+  ti:{nombre:"Gestión de TI", color:"#3fb68b"},
+  infra:{nombre:"Infraestructura y redes", color:"#f2b33d"},
+  liderazgo:{nombre:"Liderazgo e innovación", color:"#e8946a"},
+};
+const CERTIFICACIONES = [
+  {nombre:"Profesional en Dirección de Proyectos (PMP)", emisor:"Certificación profesional", tipo:"Certificación", tema:"proyectos", fecha:"2025-08", vence:"2032-12", id:"23EREWWERJR", destacada:"PMP · Dirección de Proyectos"},
+  {nombre:"AWS Certified Cloud Practitioner", emisor:"Amazon Web Services", tipo:"Certificación", tema:"nube", fecha:"2025-09", destacada:"AWS Cloud Practitioner"},
+  {nombre:"ISO/IEC 27001:2022 Lead Auditor", emisor:"Cert Join", tipo:"Certificación", tema:"seguridad", fecha:"2024-07", id:"JDANRMBKHZ", destacada:"ISO/IEC 27001 Lead Auditor"},
+  {nombre:"ISO/IEC 27001 Implementer", emisor:"Cert Join", tipo:"Certificación", tema:"seguridad", fecha:"2024-07", id:"8C4WIYAJLS", destacada:"ISO/IEC 27001 Implementer"},
+  {nombre:"ISO/IEC 27001 Internal Auditor", emisor:"Cert Join", tipo:"Certificación", tema:"seguridad", fecha:"2024-07", id:"XZDTIWKDRH", destacada:"ISO/IEC 27001 Internal Auditor"},
+  {nombre:"Sistemas de Gestión de Seguridad de la Información ISO 27001", emisor:"Udemy", tipo:"Certificación", tema:"seguridad", fecha:"2024-06"},
+  {nombre:"ITIL 4 Foundation", emisor:"PeopleCert", tipo:"Certificación", tema:"ti", fecha:"2019-11", id:"GR671089589WB", destacada:"ITIL 4 Foundation"},
+  {nombre:"Scrum Fundamentals Certified (SFC)", emisor:"SCRUMstudy", tipo:"Certificación", tema:"proyectos", fecha:"2024-07", id:"1041822", destacada:"Scrum Fundamentals (SFC)"},
+  {nombre:"Six Sigma Yellow Belt (SSYB)", emisor:"6sigmastudy", tipo:"Certificación", tema:"ti", fecha:"2024-07", id:"893516", destacada:"Six Sigma Yellow Belt"},
+  {nombre:"Cognitive Project Management in AI (CPMAI)", emisor:"Introducción · en español", tipo:"Certificación", tema:"ia", fecha:"2025-08", vence:"2034-10", destacada:"CPMAI · Gestión de proyectos de IA"},
+  {nombre:"ANBAH Essentials with IA", emisor:"Certificación en IA", tipo:"Certificación", tema:"ia", fecha:"2025-08", vence:"2028-11", id:"1097187"},
+  {nombre:"Automatiza procesos, analiza datos y desarrolla aplicaciones con Power Platform y Teams", emisor:"Net4skills", tipo:"Certificación", tema:"ia", fecha:"2025-11", id:"350404940"},
+  {nombre:"Asistentes de IA: automatiza tareas e incrementa la productividad", emisor:"Net4skills", tipo:"Curso", tema:"ia", fecha:"2026-01"},
+  {nombre:"Microsoft Power Automate", emisor:"Udemy", tipo:"Curso", tema:"ia", fecha:"2025-09", destacada:"Microsoft Power Automate"},
+  {nombre:"Google: Inteligencia Artificial y Productividad", emisor:"Santander Open Academy", tipo:"Certificación", tema:"ia", fecha:"2024-06", id:"OA-2024-0710000018997"},
+  {nombre:"IA: el futuro del trabajo con ChatGPT", emisor:"ICEMexico", tipo:"Curso", tema:"ia", fecha:"2023-04"},
+  {nombre:"Cloud Computing", emisor:"Google Actívate", tipo:"Certificación", tema:"nube", fecha:"2023-09", id:"207108280"},
+  {nombre:"Cisco CCNA 200-125 Redes", emisor:"Udemy", tipo:"Curso", tema:"infra", fecha:"2023-05", destacada:"Cisco CCNA"},
+  {nombre:"Cisco CCNA", emisor:"Capa Ocho", tipo:"Curso", tema:"infra", fecha:"2018-05"},
+  {nombre:"Introducción a Windows Server 2012 R2", emisor:"Lenovo Partners", tipo:"Curso", tema:"infra", fecha:"2015-12", id:"TTVW00LESS-R1"},
+  {nombre:"Microsoft Windows 8.1", emisor:"Microsoft", tipo:"Certificación", tema:"infra", fecha:"2016-04"},
+  {nombre:"Generalidades de la metodología ágil con PMI", emisor:"Netec", tipo:"Diplomado", tema:"proyectos", fecha:"2016-08", id:"665123822"},
+  {nombre:"Habilidades Gerenciales", emisor:"Universidad de Alta Dirección", tipo:"Diplomado", tema:"liderazgo", fecha:"2024-06"},
+  {nombre:"Centros de Datos, Operaciones de Redes y Servicios", emisor:"TECH Universidad Tecnológica", tipo:"Diplomado", tema:"infra", fecha:"2023-04"},
+  {nombre:"Innovación RedBox · Inspiring Innovation", emisor:"Microsoft", tipo:"Diplomado", tema:"liderazgo", fecha:"2020-06"},
+];
 
 /* ================= Íconos ================= */
 const SVG = {
   yo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
   proy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  cert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="m9 14.2-1.5 7.3L12 19l4.5 2.5L15 14.2"/><path d="m9.8 9 1.6 1.6L14.5 7.5"/></svg>',
   cv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h7M9 17h5"/></svg>',
   mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
   term:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 4 4-4 4M12 17h7"/></svg>',
@@ -497,6 +552,7 @@ const APPS = {
   yo:{titulo:"Sobre mí", ico:"yo", color:"#f2b33d", fg:"#0f1530", w:620, h:560, render:renderYo},
   proyectos:{titulo:"Proyectos", ico:"proy", color:"#6c8cff", w:860, h:600, render:renderProyectos, sinpad:true},
   cv:{titulo:"Currículum", ico:"cv", color:"#e8657a", w:640, h:580, render:renderCV},
+  certificaciones:{titulo:"Certificaciones", ico:"cert", color:"#2fb3c7", w:860, h:620, render:renderCertificaciones, sinpad:true},
   contacto:{titulo:"Contacto", ico:"mail", color:"#3fb68b", w:520, h:560, render:renderContacto},
   terminal:{titulo:"Terminal", ico:"term", color:"#2b3461", w:640, h:420, render:renderTerminal, sinpad:true},
 };
@@ -653,15 +709,62 @@ function renderProyectos(el){
   lista();
 }
 
+function renderCertificaciones(el){
+  const fmt = f => { const [a, m] = f.split('-'); return new Date(a, m - 1).toLocaleDateString('es-MX', {month:'short', year:'numeric'}).replace('.', ''); };
+  const lista = [...CERTIFICACIONES].sort((a, b) => b.fecha.localeCompare(a.fecha));   // más recientes primero
+  const cuenta = t => lista.filter(c => c.tipo === t).length;
+  const plural = {Todas:'Todas', 'Certificación':'Certificaciones', Diplomado:'Diplomados', Curso:'Cursos'};
+  let tipo = 'Todas', tema = '';
+  el.innerHTML = `
+    <div class="nav"><input type="search" placeholder="Buscar por nombre, institución o tema" aria-label="Buscar certificaciones"></div>
+    <div class="pagina">
+      <h3>Certificaciones</h3>
+      <p class="sub">${cuenta('Certificación')} certificaciones · ${cuenta('Diplomado')} diplomados · ${cuenta('Curso')} cursos</p>
+      <div class="filtros">${Object.keys(plural).map(t =>
+        `<button class="filtro" data-tipo="${t}" aria-pressed="${t === 'Todas'}">${plural[t]}</button>`).join('')}</div>
+      <div class="filtros">${Object.entries(TEMAS).map(([k, t]) =>
+        `<button class="filtro" data-tema="${k}" aria-pressed="false">${t.nombre}<small>${lista.filter(c => c.tema === k).length}</small></button>`).join('')}</div>
+      <div class="certs"></div>
+    </div>`;
+  const rej = el.querySelector('.certs'), input = el.querySelector('input');
+  function pintar(){
+    const q = input.value.trim().toLowerCase();
+    const res = lista.filter(c => (tipo === 'Todas' || c.tipo === tipo) && (!tema || c.tema === tema) &&
+      (c.nombre + ' ' + c.emisor + ' ' + TEMAS[c.tema].nombre).toLowerCase().includes(q));
+    rej.innerHTML = res.length ? res.map(c => `
+      <article class="cert" style="--c:${TEMAS[c.tema].color}">
+        <span class="sello" aria-hidden="true">${SVG.cert}</span>
+        <div class="txt"><b>${c.nombre}</b><span class="emisor">${c.emisor}</span>
+          <div class="meta"><span class="tipo">${c.tipo}</span><span>${fmt(c.fecha)}</span>${c.vence ? `<span>Vigente a ${fmt(c.vence)}</span>` : ''}</div>
+          ${c.id ? `<div class="meta"><span class="id">ID ${c.id}</span></div>` : ''}</div>
+      </article>`).join('')
+      : `<p class="vacio">No hay resultados${q ? ` para “${esc(input.value)}”` : ''}.</p>`;
+  }
+  el.querySelectorAll('[data-tipo]').forEach(b => b.onclick = () => {
+    tipo = b.dataset.tipo;
+    el.querySelectorAll('[data-tipo]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    pintar();
+  });
+  el.querySelectorAll('[data-tema]').forEach(b => b.onclick = () => {
+    tema = tema === b.dataset.tema ? '' : b.dataset.tema;   // tocar el mismo tema otra vez lo quita
+    el.querySelectorAll('[data-tema]').forEach(x => x.setAttribute('aria-pressed', x.dataset.tema === tema));
+    pintar();
+  });
+  input.oninput = pintar;
+  pintar();
+}
+
 function renderCV(el){
   el.innerHTML = `<h3>Currículum</h3><p class="sub">${PERFIL.puesto}</p>
     <h4>Experiencia</h4>
     <ol class="linea-tiempo">${EXPERIENCIA.map(e=>`<li><b>${e.puesto}</b><em>${e.lugar} · ${e.periodo}</em><p>${e.texto}</p></li>`).join('')}</ol>
     <h4>Formación</h4>
     <ol class="linea-tiempo">${FORMACION.map(f=>`<li><b>${f.titulo}</b><em>${f.lugar} · ${f.periodo}</em></li>`).join('')}</ol>
-    <h4>Certificaciones</h4><div class="chips">${CERTIFICACIONES.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+    <h4>Certificaciones</h4><div class="chips">${CERTIFICACIONES.filter(c=>c.destacada).map(c=>`<span class="chip">${c.destacada}</span>`).join('')}</div>
+    <button class="boton sec ver-todas" data-ir="certificaciones">Ver las ${CERTIFICACIONES.length} certificaciones y cursos →</button>
     <h4>Habilidades</h4><div class="chips">${STACK.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
     <p style="margin-top:1.8rem"><a class="boton" href="cv-wilfrido-becerril.pdf" target="_blank" rel="noopener" download="CV Wilfrido Becerril.pdf" onclick="contar('cv/descarga','Descargó CV')">Descargar CV en PDF</a></p>`;
+  el.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => abrir(b.dataset.ir));
 }
 
 function renderContacto(el){
@@ -712,13 +815,14 @@ function renderTerminal(el){
   const out = el.querySelector('pre'), inp = el.querySelector('input');
   const hist = []; let hi = 0;
   const cmds = {
-    ayuda: () => `Comandos:\n  quien        quién soy\n  proyectos    lista de proyectos\n  stack        tecnologías\n  contacto     cómo contactarme\n  abrir <app>  yo · proyectos · cv · contacto\n  fecha        fecha y hora\n  limpiar      limpia la pantalla`,
+    ayuda: () => `Comandos:\n  quien        quién soy\n  proyectos    lista de proyectos\n  stack        tecnologías\n  contacto     cómo contactarme\n  certs        certificaciones y diplomados\n  abrir <app>  yo · proyectos · cv · certificaciones · contacto\n  fecha        fecha y hora\n  limpiar      limpia la pantalla`,
     quien: () => `${PERFIL.nombre}\n${PERFIL.puesto} · ${PERFIL.empresa}`,
     proyectos: () => PROYECTOS.map(p => `  <span class="ok">${p.nombre.padEnd(24)}</span>${p.corto}`).join('\n'),
     stack: () => STACK.join(' · '),
     contacto: () => `correo    ${PERFIL.correo}\nlinkedin  ${PERFIL.linkedin}\ngithub    ${PERFIL.github}`,
     fecha: () => new Date().toLocaleString('es-MX'),
-    abrir: a => APPS[a] ? (abrir(a), `<span class="ok">Abriendo ${APPS[a].titulo}…</span>`) : `<span class="err">No existe la app “${a||''}”. Usa: yo, proyectos, cv, contacto.</span>`,
+    abrir: a => APPS[a] ? (abrir(a), `<span class="ok">Abriendo ${APPS[a].titulo}…</span>`) : `<span class="err">No existe la app “${a||''}”. Usa: yo, proyectos, cv, certificaciones, contacto.</span>`,
+    certs: () => CERTIFICACIONES.filter(c => c.tipo !== 'Curso').map(c => `  <span class="ok">${c.tipo.padEnd(14)}</span>${c.nombre} · ${c.emisor}`).join('\n'),
     limpiar: () => { out.innerHTML=''; return null; },
   };
   inp.addEventListener('keydown', e => {
