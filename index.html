@@ -268,23 +268,59 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .boton{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;background:var(--cempasuchil);color:var(--noche);font-weight:600;text-decoration:none;font-size:.9rem}
 .boton.sec{background:rgba(255,255,255,.07);color:var(--texto);border:1px solid var(--linea)}
 
-/* Certificaciones */
+/* Certificaciones: sin colores de acento, el color lo ponen las insignias */
+.ventana-certs .cuerpo h4{font-family:"Inter",var(--body);font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8b8e96;margin:2rem 0 .9rem}
 .filtros{display:flex;gap:6px;flex-wrap:wrap;margin:1.1rem 0 .4rem}
-.filtro{padding:6px 12px;border-radius:999px;border:1px solid var(--linea);font-size:.8rem;color:#dfe2f3;background:rgba(255,255,255,.03)}
+.filtro{padding:6px 12px;border-radius:999px;border:1px solid var(--linea);font-size:.8rem;color:#c9cbd2;background:rgba(255,255,255,.03)}
 .filtro:hover{background:rgba(255,255,255,.08)}
-.filtro[aria-pressed="true"]{background:var(--cempasuchil);border-color:transparent;color:var(--noche);font-weight:600}
-.filtro small{opacity:.65;margin-left:4px}
-.certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:1rem}
-.cert{display:flex;gap:12px;padding:14px;border-radius:12px;border:1px solid var(--linea);background:rgba(255,255,255,.03)}
-.cert .sello{width:40px;height:40px;flex-shrink:0;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c)}
-.cert .sello svg{width:22px;height:22px}
-.cert .txt{min-width:0}
-.cert b{display:block;font-size:.9rem;font-weight:600;line-height:1.3}
-.cert .emisor{display:block;font-size:.8rem;color:var(--tenue);margin-top:2px}
-.cert .meta{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:.74rem;color:var(--tenue)}
-.cert .tipo{color:var(--c);font-weight:600}
-.cert .id{font-family:var(--mono);font-size:.7rem;word-break:break-all}
+.filtro[aria-pressed="true"]{background:#eef0f4;border-color:transparent;color:#111214;font-weight:600}
+.filtro small{opacity:.55;margin-left:4px}
+.certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.cert{display:flex;align-items:center;gap:16px;width:100%;padding:16px;text-align:left;border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);transition:border-color .15s, transform .15s}
+@media (hover:hover){ .cert:hover{border-color:rgba(255,255,255,.22);transform:translateY(-1px)} }
+.insignia{width:72px;height:72px;flex-shrink:0;display:grid;place-items:center}
+.insignia img,.insignia svg{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6))}
+.cert .txt{min-width:0;font-family:"Inter",var(--body)}
+.cert b{display:block;font-size:.92rem;font-weight:600;line-height:1.3;color:#eef0f4}
+.cert .inst{display:block;font-size:.8rem;color:#8b8e96;margin-top:3px}
+.cert .fecha{display:block;font-size:.76rem;color:#6f727a;margin-top:6px}
+.cert .ver{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:500;color:#c9cbd2;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)}
+.cert .ver:hover{color:#fff;border-bottom-color:#fff}
+.cursos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px 24px}
+.curso{display:flex;gap:16px;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-family:"Inter",var(--body)}
+.curso time{width:64px;flex-shrink:0;padding-top:2px;font-family:var(--mono);font-size:.72rem;color:#5d6068}
+.curso b{display:block;font-size:.86rem;font-weight:500;line-height:1.35;color:#dfe1e6}
+.curso span{display:block;font-size:.76rem;color:#8b8e96;margin-top:2px}
 .ver-todas{margin-top:12px}
+
+/* Detalle de certificación (modal) */
+.cert-velo{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:20px;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  opacity:0;visibility:hidden;transition:opacity .2s, visibility .2s}
+.cert-velo.on{opacity:1;visibility:visible}
+.cert-modal{width:min(440px,100%);max-height:calc(100% - 20px);overflow:auto;padding:32px 28px 24px;border-radius:18px;text-align:center;
+  background:#141518;border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 80px -20px rgba(0,0,0,.9);font-family:"Inter",var(--body);
+  transform:translateY(10px) scale(.97);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.cert-velo.on .cert-modal{transform:none}
+.cert-modal .insignia{width:150px;height:150px;margin:0 auto 20px}
+.cert-modal h3{margin:0;font-size:1.25rem;font-weight:600;line-height:1.3;color:#eef0f4}
+.cert-modal .inst{margin:6px 0 22px;font-size:.88rem;color:#8b8e96}
+.cert-modal dl{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:0 0 24px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.08);text-align:left}
+.cert-modal dl div{padding:12px 14px;background:#1a1b1f}
+.cert-modal dt{font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6f727a}
+.cert-modal dd{margin:4px 0 0;font-size:.84rem;color:#dfe1e6}
+.cert-modal dd.mono{font-family:var(--mono);font-size:.76rem;word-break:break-all}
+.cert-modal .acciones{display:flex;gap:10px;justify-content:center}
+.cert-modal .acciones a,.cert-modal .acciones button{min-width:120px;padding:10px 18px;border-radius:10px;font-size:.88rem;font-weight:600;text-decoration:none}
+.cert-modal .verificar{background:#eef0f4;color:#111214}
+.cert-modal .verificar:hover{background:#fff}
+.cert-modal .cerrar-detalle{border:1px solid rgba(255,255,255,.16);color:#dfe1e6}
+.cert-modal .cerrar-detalle:hover{background:rgba(255,255,255,.08)}
+@media (max-width:720px){
+  .certs,.cursos{grid-template-columns:1fr}
+  .cert-modal dl{grid-template-columns:1fr}
+}
 
 /* Contacto */
 .campo{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
@@ -419,6 +455,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
   </div>
 </main>
 
+<!-- Detalle de certificación -->
+<div class="cert-velo" id="certVelo"><div class="cert-modal" role="dialog" aria-modal="true" aria-labelledby="certTitulo"></div></div>
+
 <!-- Confirmar cierre de sesión -->
 <div class="confirmar" id="confirmar" role="alertdialog" aria-modal="true" aria-labelledby="confTitulo" aria-describedby="confTexto">
   <div class="dialogo">
@@ -490,42 +529,43 @@ const FORMACION = [
   {titulo:"Técnico en Mantenimiento Preventivo y Correctivo", lugar:"CETIS 33", periodo:"2006 – 2010"},
 ];
 
-// Certificaciones, diplomados y cursos (fecha "AAAA-MM"; vence e id son opcionales)
+// ---- Certificaciones y cursos ----
+// Temas para los filtros (sin color: en esta ventana el color lo ponen las insignias)
 const TEMAS = {
-  proyectos:{nombre:"Proyectos", color:"#6c8cff"},
-  seguridad:{nombre:"Seguridad", color:"#e8657a"},
-  nube:{nombre:"Nube", color:"#2fb3c7"},
-  ia:{nombre:"IA y automatización", color:"#9b7bea"},
-  ti:{nombre:"Gestión de TI", color:"#3fb68b"},
-  infra:{nombre:"Infraestructura y redes", color:"#f2b33d"},
-  liderazgo:{nombre:"Liderazgo e innovación", color:"#e8946a"},
+  proyectos:"Proyectos", seguridad:"Seguridad", nube:"Nube", ia:"IA y automatización",
+  ti:"Gestión de TI", infra:"Infraestructura y redes", liderazgo:"Liderazgo e innovación",
 };
+// fecha y vigencia: "AAAA-MM". badge: PNG en img/badges/ (si no existe se muestra un marcador gris).
+// verificar: URL pública de la credencial (Credly, Accredible, etc.). forma: "hex" | "escudo" | "circulo".
 const CERTIFICACIONES = [
-  {nombre:"Profesional en Dirección de Proyectos (PMP)", emisor:"Certificación profesional", tipo:"Certificación", tema:"proyectos", fecha:"2025-08", vence:"2032-12", id:"23EREWWERJR", destacada:"PMP · Dirección de Proyectos"},
-  {nombre:"AWS Certified Cloud Practitioner", emisor:"Amazon Web Services", tipo:"Certificación", tema:"nube", fecha:"2025-09", destacada:"AWS Cloud Practitioner"},
-  {nombre:"ISO/IEC 27001:2022 Lead Auditor", emisor:"Cert Join", tipo:"Certificación", tema:"seguridad", fecha:"2024-07", id:"JDANRMBKHZ", destacada:"ISO/IEC 27001 Lead Auditor"},
-  {nombre:"ISO/IEC 27001 Implementer", emisor:"Cert Join", tipo:"Certificación", tema:"seguridad", fecha:"2024-07", id:"8C4WIYAJLS", destacada:"ISO/IEC 27001 Implementer"},
-  {nombre:"ISO/IEC 27001 Internal Auditor", emisor:"Cert Join", tipo:"Certificación", tema:"seguridad", fecha:"2024-07", id:"XZDTIWKDRH", destacada:"ISO/IEC 27001 Internal Auditor"},
-  {nombre:"Sistemas de Gestión de Seguridad de la Información ISO 27001", emisor:"Udemy", tipo:"Certificación", tema:"seguridad", fecha:"2024-06"},
-  {nombre:"ITIL 4 Foundation", emisor:"PeopleCert", tipo:"Certificación", tema:"ti", fecha:"2019-11", id:"GR671089589WB", destacada:"ITIL 4 Foundation"},
-  {nombre:"Scrum Fundamentals Certified (SFC)", emisor:"SCRUMstudy", tipo:"Certificación", tema:"proyectos", fecha:"2024-07", id:"1041822", destacada:"Scrum Fundamentals (SFC)"},
-  {nombre:"Six Sigma Yellow Belt (SSYB)", emisor:"6sigmastudy", tipo:"Certificación", tema:"ti", fecha:"2024-07", id:"893516", destacada:"Six Sigma Yellow Belt"},
-  {nombre:"Cognitive Project Management in AI (CPMAI)", emisor:"Introducción · en español", tipo:"Certificación", tema:"ia", fecha:"2025-08", vence:"2034-10", destacada:"CPMAI · Gestión de proyectos de IA"},
-  {nombre:"ANBAH Essentials with IA", emisor:"Certificación en IA", tipo:"Certificación", tema:"ia", fecha:"2025-08", vence:"2028-11", id:"1097187"},
-  {nombre:"Automatiza procesos, analiza datos y desarrolla aplicaciones con Power Platform y Teams", emisor:"Net4skills", tipo:"Certificación", tema:"ia", fecha:"2025-11", id:"350404940"},
-  {nombre:"Asistentes de IA: automatiza tareas e incrementa la productividad", emisor:"Net4skills", tipo:"Curso", tema:"ia", fecha:"2026-01"},
-  {nombre:"Microsoft Power Automate", emisor:"Udemy", tipo:"Curso", tema:"ia", fecha:"2025-09", destacada:"Microsoft Power Automate"},
-  {nombre:"Google: Inteligencia Artificial y Productividad", emisor:"Santander Open Academy", tipo:"Certificación", tema:"ia", fecha:"2024-06", id:"OA-2024-0710000018997"},
-  {nombre:"IA: el futuro del trabajo con ChatGPT", emisor:"ICEMexico", tipo:"Curso", tema:"ia", fecha:"2023-04"},
-  {nombre:"Cloud Computing", emisor:"Google Actívate", tipo:"Certificación", tema:"nube", fecha:"2023-09", id:"207108280"},
-  {nombre:"Cisco CCNA 200-125 Redes", emisor:"Udemy", tipo:"Curso", tema:"infra", fecha:"2023-05", destacada:"Cisco CCNA"},
-  {nombre:"Cisco CCNA", emisor:"Capa Ocho", tipo:"Curso", tema:"infra", fecha:"2018-05"},
-  {nombre:"Introducción a Windows Server 2012 R2", emisor:"Lenovo Partners", tipo:"Curso", tema:"infra", fecha:"2015-12", id:"TTVW00LESS-R1"},
-  {nombre:"Microsoft Windows 8.1", emisor:"Microsoft", tipo:"Certificación", tema:"infra", fecha:"2016-04"},
-  {nombre:"Generalidades de la metodología ágil con PMI", emisor:"Netec", tipo:"Diplomado", tema:"proyectos", fecha:"2016-08", id:"665123822"},
-  {nombre:"Habilidades Gerenciales", emisor:"Universidad de Alta Dirección", tipo:"Diplomado", tema:"liderazgo", fecha:"2024-06"},
-  {nombre:"Centros de Datos, Operaciones de Redes y Servicios", emisor:"TECH Universidad Tecnológica", tipo:"Diplomado", tema:"infra", fecha:"2023-04"},
-  {nombre:"Innovación RedBox · Inspiring Innovation", emisor:"Microsoft", tipo:"Diplomado", tema:"liderazgo", fecha:"2020-06"},
+  {titulo:"Profesional en Dirección de Proyectos (PMP)", institucion:"Certificación profesional", tema:"proyectos", fecha:"2025-08", vigencia:"2032-12", id:"23EREWWERJR", badge:"img/badges/pmp.png", verificar:"", forma:"hex", siglas:"PMP", destacada:"PMP · Dirección de Proyectos"},
+  {titulo:"AWS Certified Cloud Practitioner", institucion:"Amazon Web Services", tema:"nube", fecha:"2025-09", badge:"img/badges/aws-cloud-practitioner.png", verificar:"", forma:"hex", siglas:"AWS", destacada:"AWS Cloud Practitioner"},
+  {titulo:"ISO/IEC 27001:2022 Lead Auditor", institucion:"Cert Join", tema:"seguridad", fecha:"2024-07", id:"JDANRMBKHZ", badge:"img/badges/iso27001-lead-auditor.png", verificar:"", forma:"escudo", siglas:"ISO", destacada:"ISO/IEC 27001 Lead Auditor"},
+  {titulo:"ISO/IEC 27001 Implementer", institucion:"Cert Join", tema:"seguridad", fecha:"2024-07", id:"8C4WIYAJLS", badge:"img/badges/iso27001-implementer.png", verificar:"", forma:"escudo", siglas:"ISO", destacada:"ISO/IEC 27001 Implementer"},
+  {titulo:"ISO/IEC 27001 Internal Auditor", institucion:"Cert Join", tema:"seguridad", fecha:"2024-07", id:"XZDTIWKDRH", badge:"img/badges/iso27001-internal-auditor.png", verificar:"", forma:"escudo", siglas:"ISO", destacada:"ISO/IEC 27001 Internal Auditor"},
+  {titulo:"Sistemas de Gestión de Seguridad de la Información ISO 27001", institucion:"Udemy", tema:"seguridad", fecha:"2024-06", badge:"img/badges/iso27001-udemy.png", verificar:"", forma:"escudo", siglas:"SGSI"},
+  {titulo:"ITIL 4 Foundation", institucion:"PeopleCert", tema:"ti", fecha:"2019-11", id:"GR671089589WB", badge:"img/badges/itil4-foundation.png", verificar:"", forma:"circulo", siglas:"ITIL", destacada:"ITIL 4 Foundation"},
+  {titulo:"Scrum Fundamentals Certified (SFC)", institucion:"SCRUMstudy", tema:"proyectos", fecha:"2024-07", id:"1041822", badge:"img/badges/scrum-fundamentals.png", verificar:"", forma:"circulo", siglas:"SFC", destacada:"Scrum Fundamentals (SFC)"},
+  {titulo:"Six Sigma Yellow Belt (SSYB)", institucion:"6sigmastudy", tema:"ti", fecha:"2024-07", id:"893516", badge:"img/badges/six-sigma-yellow-belt.png", verificar:"", forma:"circulo", siglas:"SSYB", destacada:"Six Sigma Yellow Belt"},
+  {titulo:"Cognitive Project Management in AI (CPMAI)", institucion:"Introducción · en español", tema:"ia", fecha:"2025-08", vigencia:"2034-10", badge:"img/badges/cpmai.png", verificar:"", forma:"hex", siglas:"CPMAI", destacada:"CPMAI · Gestión de proyectos de IA"},
+  {titulo:"ANBAH Essentials with IA", institucion:"Certificación en IA", tema:"ia", fecha:"2025-08", vigencia:"2028-11", id:"1097187", badge:"img/badges/anbah-essentials.png", verificar:"", forma:"escudo", siglas:"ANB"},
+  {titulo:"Automatiza procesos, analiza datos y desarrolla aplicaciones con Power Platform y Teams", institucion:"Net4skills", tema:"ia", fecha:"2025-11", id:"350404940", badge:"img/badges/power-platform-teams.png", verificar:"", forma:"circulo", siglas:"PP"},
+  {titulo:"Google: Inteligencia Artificial y Productividad", institucion:"Santander Open Academy", tema:"ia", fecha:"2024-06", id:"OA-2024-0710000018997", badge:"img/badges/google-ia-productividad.png", verificar:"", forma:"circulo", siglas:"IA"},
+  {titulo:"Cloud Computing", institucion:"Google Actívate", tema:"nube", fecha:"2023-09", id:"207108280", badge:"img/badges/google-cloud-computing.png", verificar:"", forma:"circulo", siglas:"GC"},
+  {titulo:"Microsoft Windows 8.1", institucion:"Microsoft", tema:"infra", fecha:"2016-04", badge:"img/badges/windows-8-1.png", verificar:"", forma:"escudo", siglas:"W8.1"},
+];
+// Cursos y diplomados: lista compacta, sin insignia
+const CURSOS = [
+  {titulo:"Asistentes de IA: automatiza tareas e incrementa la productividad", institucion:"Net4skills", tema:"ia", fecha:"2026-01"},
+  {titulo:"Microsoft Power Automate", institucion:"Udemy", tema:"ia", fecha:"2025-09", destacada:"Microsoft Power Automate"},
+  {titulo:"Habilidades Gerenciales", institucion:"Diplomado · Universidad de Alta Dirección", tema:"liderazgo", fecha:"2024-06"},
+  {titulo:"Cisco CCNA 200-125 Redes", institucion:"Udemy", tema:"infra", fecha:"2023-05", destacada:"Cisco CCNA"},
+  {titulo:"IA: el futuro del trabajo con ChatGPT", institucion:"ICEMexico", tema:"ia", fecha:"2023-04"},
+  {titulo:"Centros de Datos, Operaciones de Redes y Servicios", institucion:"Diplomado · TECH Universidad Tecnológica", tema:"infra", fecha:"2023-04"},
+  {titulo:"Innovación RedBox · Inspiring Innovation", institucion:"Diplomado · Microsoft", tema:"liderazgo", fecha:"2020-06"},
+  {titulo:"Cisco CCNA", institucion:"Capa Ocho", tema:"infra", fecha:"2018-05"},
+  {titulo:"Generalidades de la metodología ágil con PMI", institucion:"Diplomado · Netec", tema:"proyectos", fecha:"2016-08"},
+  {titulo:"Introducción a Windows Server 2012 R2", institucion:"Lenovo Partners", tema:"infra", fecha:"2015-12"},
 ];
 
 /* ================= Íconos ================= */
@@ -552,7 +592,7 @@ const APPS = {
   yo:{titulo:"Sobre mí", ico:"yo", color:"#f2b33d", fg:"#0f1530", w:620, h:560, render:renderYo},
   proyectos:{titulo:"Proyectos", ico:"proy", color:"#6c8cff", w:860, h:600, render:renderProyectos, sinpad:true},
   cv:{titulo:"Currículum", ico:"cv", color:"#e8657a", w:640, h:580, render:renderCV},
-  certificaciones:{titulo:"Certificaciones", ico:"cert", color:"#2fb3c7", w:860, h:620, render:renderCertificaciones, sinpad:true},
+  certificaciones:{titulo:"Certificaciones", ico:"cert", color:"#2fb3c7", w:860, h:620, render:renderCertificaciones, sinpad:true, clase:"ventana-certs"},
   contacto:{titulo:"Contacto", ico:"mail", color:"#3fb68b", w:520, h:560, render:renderContacto},
   terminal:{titulo:"Terminal", ico:"term", color:"#2b3461", w:640, h:420, render:renderTerminal, sinpad:true},
 };
@@ -577,7 +617,7 @@ function abrir(id){
   if(!abiertas[id] && !restaurando) contar('app/' + id, 'Abrió ' + app.titulo);
   if(abiertas[id]){ const v = abiertas[id]; v.classList.remove('min'); enfocar(v); return v; }
   const v = document.createElement('section');
-  v.className = 'ventana' + (esTabletaVertical() ? ' max' : '');   // en tableta vertical se abren maximizadas
+  v.className = 'ventana' + (app.clase ? ' ' + app.clase : '') + (esTabletaVertical() ? ' max' : '');   // en tableta vertical se abren maximizadas
   v.dataset.app = id;
   v.setAttribute('role','dialog'); v.setAttribute('aria-label', app.titulo);
   const W = Math.min(app.w, innerWidth - 40), H = Math.min(app.h, innerHeight - 130);
@@ -709,42 +749,65 @@ function renderProyectos(el){
   lista();
 }
 
+/* Insignia: imagen oficial si existe; si no (o si no carga), marcador gris con la forma y las siglas */
+function marcadorSVG(c){
+  const formas = {
+    hex:'<polygon points="50,5 91,28 91,72 50,95 9,72 9,28"/>',
+    escudo:'<path d="M50 5 89 17v31c0 24-17 40-39 47C28 88 11 72 11 48V17z"/>',
+    circulo:'<circle cx="50" cy="50" r="44"/>',
+  };
+  const t = (c.siglas || '').length, tam = t <= 3 ? 22 : t === 4 ? 18 : 15;
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="${esc(c.siglas || c.titulo)}">
+    <g fill="#26282d" stroke="#4a4d55" stroke-width="3">${formas[c.forma] || formas.circulo}</g>
+    <text x="50" y="50" dy=".35em" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="600" font-size="${tam}" fill="#8b8e96">${esc(c.siglas || '')}</text></svg>`;
+}
+function insigniaHTML(c){
+  return `<span class="insignia">${c.badge
+    ? `<img src="${c.badge}" alt="Insignia ${esc(c.titulo)}" loading="lazy" data-marcador="${encodeURIComponent(marcadorSVG(c))}" onerror="this.outerHTML=decodeURIComponent(this.dataset.marcador)">`
+    : marcadorSVG(c)}</span>`;
+}
+const fechaCorta = f => { const [a, m] = f.split('-'); return new Date(a, m - 1).toLocaleDateString('es-MX', {month:'short', year:'numeric'}).replace('.', ''); };
+
 function renderCertificaciones(el){
-  const fmt = f => { const [a, m] = f.split('-'); return new Date(a, m - 1).toLocaleDateString('es-MX', {month:'short', year:'numeric'}).replace('.', ''); };
-  const lista = [...CERTIFICACIONES].sort((a, b) => b.fecha.localeCompare(a.fecha));   // más recientes primero
-  const cuenta = t => lista.filter(c => c.tipo === t).length;
-  const plural = {Todas:'Todas', 'Certificación':'Certificaciones', Diplomado:'Diplomados', Curso:'Cursos'};
-  let tipo = 'Todas', tema = '';
+  const certs = [...CERTIFICACIONES].sort((a, b) => b.fecha.localeCompare(a.fecha));   // más recientes primero
+  const cursos = [...CURSOS].sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const todos = [...certs, ...cursos];
+  let tema = '';
   el.innerHTML = `
-    <div class="nav"><input type="search" placeholder="Buscar por nombre, institución o tema" aria-label="Buscar certificaciones"></div>
+    <div class="nav"><input type="search" placeholder="Buscar por nombre, institución o tema" aria-label="Buscar certificaciones y cursos"></div>
     <div class="pagina">
       <h3>Certificaciones</h3>
-      <p class="sub">${cuenta('Certificación')} certificaciones · ${cuenta('Diplomado')} diplomados · ${cuenta('Curso')} cursos</p>
-      <div class="filtros">${Object.keys(plural).map(t =>
-        `<button class="filtro" data-tipo="${t}" aria-pressed="${t === 'Todas'}">${plural[t]}</button>`).join('')}</div>
-      <div class="filtros">${Object.entries(TEMAS).map(([k, t]) =>
-        `<button class="filtro" data-tema="${k}" aria-pressed="false">${t.nombre}<small>${lista.filter(c => c.tema === k).length}</small></button>`).join('')}</div>
-      <div class="certs"></div>
+      <p class="sub">${certs.length} certificaciones · ${cursos.length} cursos y diplomados</p>
+      <div class="filtros">${Object.entries(TEMAS).map(([k, nombre]) =>
+        `<button class="filtro" data-tema="${k}" aria-pressed="false">${nombre}<small>${todos.filter(c => c.tema === k).length}</small></button>`).join('')}</div>
+      <section class="sec-certs"><h4>Certificaciones</h4><div class="certs"></div></section>
+      <section class="sec-cursos"><h4>Cursos</h4><div class="cursos"></div></section>
+      <p class="vacio" hidden></p>
     </div>`;
-  const rej = el.querySelector('.certs'), input = el.querySelector('input');
+  const input = el.querySelector('input'), vacio = el.querySelector('.vacio');
+  const secCerts = el.querySelector('.sec-certs'), secCursos = el.querySelector('.sec-cursos');
+  const coincide = (c, q) => (!tema || c.tema === tema) && (c.titulo + ' ' + c.institucion + ' ' + TEMAS[c.tema]).toLowerCase().includes(q);
   function pintar(){
     const q = input.value.trim().toLowerCase();
-    const res = lista.filter(c => (tipo === 'Todas' || c.tipo === tipo) && (!tema || c.tema === tema) &&
-      (c.nombre + ' ' + c.emisor + ' ' + TEMAS[c.tema].nombre).toLowerCase().includes(q));
-    rej.innerHTML = res.length ? res.map(c => `
-      <article class="cert" style="--c:${TEMAS[c.tema].color}">
-        <span class="sello" aria-hidden="true">${SVG.cert}</span>
-        <div class="txt"><b>${c.nombre}</b><span class="emisor">${c.emisor}</span>
-          <div class="meta"><span class="tipo">${c.tipo}</span><span>${fmt(c.fecha)}</span>${c.vence ? `<span>Vigente a ${fmt(c.vence)}</span>` : ''}</div>
-          ${c.id ? `<div class="meta"><span class="id">ID ${c.id}</span></div>` : ''}</div>
-      </article>`).join('')
-      : `<p class="vacio">No hay resultados${q ? ` para “${esc(input.value)}”` : ''}.</p>`;
+    const rc = certs.filter(c => coincide(c, q)), rk = cursos.filter(c => coincide(c, q));
+    el.querySelector('.certs').innerHTML = rc.map(c => `
+      <button class="cert" data-i="${CERTIFICACIONES.indexOf(c)}" aria-label="Ver detalle: ${esc(c.titulo)}">
+        ${insigniaHTML(c)}
+        <span class="txt"><b>${c.titulo}</b><span class="inst">${c.institucion}</span>
+          <span class="fecha">${fechaCorta(c.fecha)}${c.vigencia ? ` · Vigente a ${fechaCorta(c.vigencia)}` : ''}</span>
+          ${c.verificar ? `<a class="ver" href="${c.verificar}" target="_blank" rel="noopener">Ver credencial ↗</a>` : ''}</span>
+      </button>`).join('');
+    el.querySelector('.cursos').innerHTML = rk.map(c => `
+      <div class="curso"><time datetime="${c.fecha}">${fechaCorta(c.fecha)}</time>
+        <div><b>${c.titulo}</b><span>${c.institucion}</span></div></div>`).join('');
+    secCerts.hidden = !rc.length; secCursos.hidden = !rk.length;   // sección vacía = oculta
+    vacio.hidden = !!(rc.length || rk.length);
+    vacio.textContent = `No hay resultados${q ? ` para “${input.value.trim()}”` : ''}.`;
+    el.querySelectorAll('.cert').forEach(b => b.onclick = e => {
+      if(e.target.closest('.ver')){ e.stopPropagation(); return; }   // el enlace abre la credencial, no el detalle
+      abrirDetalleCert(CERTIFICACIONES[b.dataset.i], b);
+    });
   }
-  el.querySelectorAll('[data-tipo]').forEach(b => b.onclick = () => {
-    tipo = b.dataset.tipo;
-    el.querySelectorAll('[data-tipo]').forEach(x => x.setAttribute('aria-pressed', x === b));
-    pintar();
-  });
   el.querySelectorAll('[data-tema]').forEach(b => b.onclick = () => {
     tema = tema === b.dataset.tema ? '' : b.dataset.tema;   // tocar el mismo tema otra vez lo quita
     el.querySelectorAll('[data-tema]').forEach(x => x.setAttribute('aria-pressed', x.dataset.tema === tema));
@@ -754,14 +817,45 @@ function renderCertificaciones(el){
   pintar();
 }
 
+/* Modal de detalle */
+let certOrigen = null;
+function abrirDetalleCert(c, origen){
+  const velo = document.getElementById('certVelo');
+  certOrigen = origen || null;
+  velo.querySelector('.cert-modal').innerHTML = `
+    ${insigniaHTML(c)}
+    <h3 id="certTitulo">${c.titulo}</h3>
+    <p class="inst">${c.institucion}</p>
+    <dl>
+      <div><dt>Emitida</dt><dd>${fechaCorta(c.fecha)}</dd></div>
+      <div><dt>Vigencia</dt><dd>${c.vigencia ? fechaCorta(c.vigencia) : 'Sin vencimiento'}</dd></div>
+      <div><dt>ID de credencial</dt><dd class="mono">${c.id || '—'}</dd></div>
+    </dl>
+    <div class="acciones">
+      ${c.verificar ? `<a class="verificar" href="${c.verificar}" target="_blank" rel="noopener">Verificar ↗</a>` : ''}
+      <button class="cerrar-detalle" type="button">Cerrar</button>
+    </div>`;
+  velo.querySelector('.cerrar-detalle').onclick = cerrarDetalleCert;
+  velo.classList.add('on');
+  contar('certificacion/' + (c.siglas || c.titulo), c.titulo);
+  setTimeout(() => velo.querySelector('.cerrar-detalle').focus(), 30);
+}
+function cerrarDetalleCert(){
+  const velo = document.getElementById('certVelo');
+  if(!velo.classList.contains('on')) return false;
+  velo.classList.remove('on');
+  if(certOrigen && document.contains(certOrigen)) certOrigen.focus();
+  return true;
+}
+
 function renderCV(el){
   el.innerHTML = `<h3>Currículum</h3><p class="sub">${PERFIL.puesto}</p>
     <h4>Experiencia</h4>
     <ol class="linea-tiempo">${EXPERIENCIA.map(e=>`<li><b>${e.puesto}</b><em>${e.lugar} · ${e.periodo}</em><p>${e.texto}</p></li>`).join('')}</ol>
     <h4>Formación</h4>
     <ol class="linea-tiempo">${FORMACION.map(f=>`<li><b>${f.titulo}</b><em>${f.lugar} · ${f.periodo}</em></li>`).join('')}</ol>
-    <h4>Certificaciones</h4><div class="chips">${CERTIFICACIONES.filter(c=>c.destacada).map(c=>`<span class="chip">${c.destacada}</span>`).join('')}</div>
-    <button class="boton sec ver-todas" data-ir="certificaciones">Ver las ${CERTIFICACIONES.length} certificaciones y cursos →</button>
+    <h4>Certificaciones</h4><div class="chips">${[...CERTIFICACIONES, ...CURSOS].filter(c=>c.destacada).map(c=>`<span class="chip">${c.destacada}</span>`).join('')}</div>
+    <button class="boton sec ver-todas" data-ir="certificaciones">Ver las ${CERTIFICACIONES.length + CURSOS.length} certificaciones y cursos →</button>
     <h4>Habilidades</h4><div class="chips">${STACK.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
     <p style="margin-top:1.8rem"><a class="boton" href="cv-wilfrido-becerril.pdf" target="_blank" rel="noopener" download="CV Wilfrido Becerril.pdf" onclick="contar('cv/descarga','Descargó CV')">Descargar CV en PDF</a></p>`;
   el.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => abrir(b.dataset.ir));
@@ -822,7 +916,7 @@ function renderTerminal(el){
     contacto: () => `correo    ${PERFIL.correo}\nlinkedin  ${PERFIL.linkedin}\ngithub    ${PERFIL.github}`,
     fecha: () => new Date().toLocaleString('es-MX'),
     abrir: a => APPS[a] ? (abrir(a), `<span class="ok">Abriendo ${APPS[a].titulo}…</span>`) : `<span class="err">No existe la app “${a||''}”. Usa: yo, proyectos, cv, certificaciones, contacto.</span>`,
-    certs: () => CERTIFICACIONES.filter(c => c.tipo !== 'Curso').map(c => `  <span class="ok">${c.tipo.padEnd(14)}</span>${c.nombre} · ${c.emisor}`).join('\n'),
+    certs: () => CERTIFICACIONES.map(c => `  <span class="ok">${(c.siglas || '').padEnd(7)}</span>${c.titulo} · ${c.institucion}`).join('\n'),
     limpiar: () => { out.innerHTML=''; return null; },
   };
   inp.addEventListener('keydown', e => {
@@ -1071,6 +1165,7 @@ document.getElementById('confX').onclick = cancelarCierre;
 confirmar.addEventListener('click', e => { if(e.target === confirmar) cancelarCierre(); });
 
 function cerrarSesion(){
+  cerrarDetalleCert();
   cerrarMenu(); ocultarBienvenida(); sonar('cierre');
   // no se llama a guardarVentanas(): la próxima vez que entres se reabren las mismas ventanas
   Object.keys(abiertas).forEach(id => { abiertas[id].remove(); delete abiertas[id]; });
@@ -1101,7 +1196,9 @@ function ajustarVentanas(){
 let resizeTimer;
 addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(ajustarVentanas, 150); });
 document.getElementById('atras').addEventListener('click', e => { e.stopPropagation(); volver(); });
+document.getElementById('certVelo').addEventListener('click', e => { if(e.target.id === 'certVelo') cerrarDetalleCert(); });
 addEventListener('keydown', e => {
+  if(e.key === 'Escape' && document.getElementById('certVelo').classList.contains('on')){ cerrarDetalleCert(); return; }
   if(estado === 'bloqueo'){ desbloquear(); return; }
   if(estado === 'login'){
     if(e.key === 'Enter' || e.key === 'ArrowRight') entrar();
