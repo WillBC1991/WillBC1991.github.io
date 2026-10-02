@@ -444,7 +444,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 <section class="bloqueo" id="bloqueo" tabindex="0" aria-label="Pantalla de bloqueo. Presiona cualquier tecla para entrar.">
   <div class="reloj-grande"><span id="horaG">--:--</span><small id="fechaG"></small></div>
   <div class="usuario">
-    <button class="pill" id="pill"><span class="avatar" data-avatar>WB</span>Wilfrido Becerril</button>
+    <button class="pill" id="pill"><span class="avatar" data-avatar>WB</span>Will B.</button>
     <span class="pista">Haz clic o presiona cualquier tecla para entrar</span>
   </div>
 </section>
@@ -452,7 +452,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 <!-- Inicio de sesión -->
 <section class="login" id="login" aria-label="Inicio de sesión" aria-live="polite">
   <div class="avatar" data-avatar>WB</div>
-  <h2>Wilfrido Becerril</h2>
+  <h2>Will B.</h2>
   <p class="rol">Líder de TI · Desarrollo y Mejora Continua</p>
   <div class="clave"><span class="puntos" id="puntos"></span><span class="giro" aria-hidden="true"></span></div>
   <p class="aviso" id="aviso"></p>
@@ -516,6 +516,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 /* ================= Contenido (edita aquí) ================= */
 const PERFIL = {
   nombre: "Wilfrido Becerril",
+  alias: "Will B.",                          // nombre corto: bloqueo, inicio de sesión y Sobre mí
   puesto: "Líder de TI, Desarrollo y Mejora Continua",
   empresa: "BSD SmartPayroll",
   ciudad: "México",
@@ -750,7 +751,7 @@ document.querySelectorAll('.icono').forEach(b => b.onclick = () => abrir(b.datas
 function renderYo(el){
   el.innerHTML = `
     <div class="perfil"><div class="avatar" data-avatar>${avatarHTML()}</div>
-      <div><h3>${PERFIL.nombre}</h3><p class="sub" style="margin:0">${PERFIL.puesto} en ${PERFIL.empresa}</p></div></div>
+      <div><h3>${PERFIL.alias}</h3><p class="sub" style="margin:0">${PERFIL.puesto} en ${PERFIL.empresa}</p></div></div>
     <p>Construyo las herramientas internas con las que opera una empresa de servicios de nómina en ${PERFIL.ciudad}: portales de RH, dashboards, integraciones con sistemas biométricos y telefonía, y pequeñas utilidades que le ahorran horas al equipo.</p>
     <p>Me gusta encontrar el proceso que alguien hace a mano en Excel y convertirlo en algo que corre solo.</p>
     <div class="cifras">
