@@ -455,11 +455,24 @@ const PROYECTOS = [
 ];
 
 const EXPERIENCIA = [
-  {periodo:"Actual", puesto:PERFIL.puesto, lugar:PERFIL.empresa,
-   texto:"Dirijo el área de TI: desarrollo de herramientas internas, sistemas de RH, infraestructura, soporte y mejora continua, coordinando a un equipo multidisciplinario."},
-  {periodo:"Antes", puesto:"Tu puesto anterior", lugar:"Empresa",
-   texto:"Describe aquí tu experiencia previa más relevante."},
+  {periodo:"2017 – Actual", puesto:PERFIL.puesto, lugar:PERFIL.empresa,
+   texto:"Dirijo el área de TI: desarrollo de herramientas internas, sistemas de RH, infraestructura, soporte y mejora continua. Inicié como Coordinador de Infraestructura de TI, administrando los recursos de TI de múltiples proyectos con base en ITIL y SLAs: help desk, Office 365, redes de voz y datos, centro de datos, respaldos, continuidad del servicio, proveedores e impulso de ISO 27001."},
+  {periodo:"2016 – 2017", puesto:"Coordinador de Soporte de TI", lugar:"Praxis",
+   texto:"Líder de operación del área de informática: equipo de cómputo de usuario final, compras y cotizaciones, control de activos, Directorio Activo, atención a usuarios VIP, cierre mensual de SLAs y planes estratégicos de operación."},
+  {periodo:"2015 – 2016", puesto:"Coordinador de las áreas de operación", lugar:"Mainbit · Proyecto IMP",
+   texto:"Coordinación de la operación del proyecto del Instituto Mexicano del Petróleo en la sede de México y foráneas: solicitudes de servicios TIC, implementación de equipos, garantías, gestión del personal y revisión de SLAs."},
+  {periodo:"2014 – 2015", puesto:"Ingeniero en sitio", lugar:"Instituto Mexicano del Petróleo",
+   texto:"Mantenimiento y reparación de equipos de cómputo e impresoras, migración de datos, imágenes de sistema operativo y atención de tickets."},
+  {periodo:"2013", puesto:"Servicio social", lugar:"PEMEX",
+   texto:"Alta de equipos al dominio, soporte remoto, configuración de equipos móviles, instalación de equipos y mantenimiento preventivo y correctivo."},
 ];
+
+const FORMACION = [
+  {titulo:"Licenciatura en Ciencias de la Informática", lugar:"Instituto Leonardo Bravo", periodo:"2010 – 2014"},
+  {titulo:"Técnico en Mantenimiento Preventivo y Correctivo", lugar:"CETIS 33", periodo:"2006 – 2010"},
+];
+
+const CERTIFICACIONES = ["PMP · Dirección de Proyectos","AWS Cloud Practitioner","ISO/IEC 27001 Lead Auditor","ISO/IEC 27001 Implementer","ISO/IEC 27001 Internal Auditor","ITIL 4 Foundation","Scrum Fundamentals (SFC)","Six Sigma Yellow Belt","CPMAI · Gestión de proyectos de IA","Microsoft Power Automate","Cisco CCNA"];
 
 /* ================= Íconos ================= */
 const SVG = {
@@ -644,8 +657,11 @@ function renderCV(el){
   el.innerHTML = `<h3>Currículum</h3><p class="sub">${PERFIL.puesto}</p>
     <h4>Experiencia</h4>
     <ol class="linea-tiempo">${EXPERIENCIA.map(e=>`<li><b>${e.puesto}</b><em>${e.lugar} · ${e.periodo}</em><p>${e.texto}</p></li>`).join('')}</ol>
+    <h4>Formación</h4>
+    <ol class="linea-tiempo">${FORMACION.map(f=>`<li><b>${f.titulo}</b><em>${f.lugar} · ${f.periodo}</em></li>`).join('')}</ol>
+    <h4>Certificaciones</h4><div class="chips">${CERTIFICACIONES.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
     <h4>Habilidades</h4><div class="chips">${STACK.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
-    <p style="margin-top:1.8rem"><a class="boton" href="#" onclick="alert('Agrega aquí el enlace a tu CV en PDF');return false">Descargar CV en PDF</a></p>`;
+    <p style="margin-top:1.8rem"><a class="boton" href="cv-wilfrido-becerril.pdf" target="_blank" rel="noopener" download="CV Wilfrido Becerril.pdf" onclick="contar('cv/descarga','Descargó CV')">Descargar CV en PDF</a></p>`;
 }
 
 function renderContacto(el){
