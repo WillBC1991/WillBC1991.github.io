@@ -1649,7 +1649,7 @@ function resize() {
 // El mouse solo se usa como destino; la posición real lo sigue con suavizado
 addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse') return;
-  mouse.tx = e.clientX / W * 2 - 1; mouse.ty = e.clientY / H * 2 - 1;
+  mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1;   // innerWidth: W vale 0 hasta que el universo se prepara
 });
 document.addEventListener('mouseout', e => { if (!e.relatedTarget) mouse.tx = mouse.ty = 0; });
 let resizeTimer;
@@ -1979,7 +1979,7 @@ function resize() {
 // El mouse solo se usa como destino; la posición real lo sigue con suavizado
 addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse') return;
-  mouse.tx = e.clientX / W * 2 - 1; mouse.ty = e.clientY / H * 2 - 1;
+  mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1;   // innerWidth: W vale 0 hasta que el universo se prepara
 });
 document.addEventListener('mouseout', e => { if (!e.relatedTarget) mouse.tx = mouse.ty = 0; });
 let resizeTimer;
@@ -2283,7 +2283,7 @@ function resize() {
 // El mouse solo se usa como destino; la posición real lo sigue con suavizado
 addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse') return;
-  mouse.tx = e.clientX / W * 2 - 1; mouse.ty = e.clientY / H * 2 - 1;
+  mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1;   // innerWidth: W vale 0 hasta que el universo se prepara
 });
 document.addEventListener('mouseout', e => { if (!e.relatedTarget) mouse.tx = mouse.ty = 0; });
 let resizeTimer;
