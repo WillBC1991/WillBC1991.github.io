@@ -390,6 +390,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .terminal pre{margin:0;white-space:pre-wrap;font:inherit}
 .terminal .w{color:var(--cempasuchil);font-weight:600}
 .terminal .t{color:#8b8e96}
+.terminal .cmd{color:var(--cempasuchil);cursor:pointer;border-bottom:1px dashed rgba(242,179,61,.5)}
+.terminal .cmd:hover{color:#ffd27a;border-bottom-style:solid}
 
 /* Ventanas redimensionables desde la esquina inferior derecha */
 .redim{position:absolute;right:0;bottom:0;width:18px;height:18px;z-index:3;cursor:nwse-resize;touch-action:none;
@@ -574,9 +576,10 @@ const PROYECTOS = [
    imagen:"img/proyectos/clip-bsd.jpg", url:"https://clip-bsd.ai.studio/",
    texto:"Portal empresarial para la conciliación bancaria, el control de comisiones y el historial de transacciones de las terminales de cobro de cada sucursal, con filtros, totales y seguimiento en tiempo real.",
    tech:["Firebase","Firestore","Google AI Studio","Dashboards","Conciliación bancaria"]},
-  {id:"smart-contabilidad", nombre:"Smart Contabilidad", color:"#e8657a", corto:"Registro de actividades del área contable",
-   texto:"Sistema tipo CRM para registrar y dar seguimiento a las actividades del equipo contable, con permisos distintos según el rol de cada usuario.",
-   tech:["Firebase","Firestore","Google AI Studio"]},
+  {id:"smart-contabilidad", nombre:"Smart Contabilidad", color:"#2e9e5b", corto:"Registro de actividades del área contable",
+   imagen:"img/proyectos/smart-contabilidad.jpg", url:"https://smart-contabilidad-806855890789.us-west1.run.app/",
+   texto:"Sistema tipo CRM con inteligencia artificial para el equipo contable: automatiza el registro de la jornada laboral, muestra el avance del equipo en tiempo real y da datos actualizados para tomar decisiones. Permisos distintos según el rol de cada usuario.",
+   tech:["Firebase","Firestore","Google AI Studio","Google Cloud Run","Inteligencia artificial"]},
   {id:"smart-operaciones", nombre:"Smart Operaciones", color:"#2563eb", corto:"Seguimiento de contratos y operación",
    imagen:"img/proyectos/smart-operaciones.jpg", url:"https://smart-operaciones-bsd.ai.studio/",
    texto:"Plataforma para gestionar la operación desde un solo lugar y dar seguimiento al ciclo de vida de los contratos, con información en tiempo real y analítica. Incluye el módulo de Llamadas de Calidad, integrado con la API de Zoom Phone para registrar y evaluar llamadas.",
@@ -1042,11 +1045,21 @@ function renderContacto(el){
 
 function renderTerminal(el){
   el.classList.add('terminal');
-  el.innerHTML = `<pre>Will 1.0 — escribe <span class="p">ayuda</span> para ver los comandos.\n\n</pre><div class="fila"><span class="p">will@bsd:~$</span><input aria-label="Comando" autocomplete="off" spellcheck="false"></div>`;
+  const c = k => `<span class="cmd" data-cmd="${k}" role="button" tabindex="0">${k}</span>`;
+  el.innerHTML = `<pre><span class="w">Bienvenido a la Terminal de Will 👋</span>
+Escribe una palabra abajo y presiona <span class="w">Enter</span>, o ${esTactil() ? 'toca' : 'haz clic en'} un comando para probarlo.
+
+  ${c('ayuda')}       ver todo lo que puedes hacer
+  ${c('proyectos')}   ver los sistemas que he construido
+  ${c('contacto')}    cómo escribirme
+
+Comandos secretos para divertirte: ${c('matrix')} · ${c('neofetch')} · ${c('sudo')} · ${c('cafe')}
+
+</pre><div class="fila"><span class="p">will@bsd:~$</span><input aria-label="Comando" autocomplete="off" spellcheck="false"></div>`;
   const out = el.querySelector('pre'), inp = el.querySelector('input');
   const hist = []; let hi = 0;
   const cmds = {
-    ayuda: () => `Comandos:\n  quien        quién soy\n  proyectos    lista de proyectos\n  stack        tecnologías\n  contacto     cómo contactarme\n  certs        certificaciones y diplomados\n  cv           descarga mi CV en PDF\n  abrir <app>  yo · proyectos · cv · certificaciones · contacto\n  fecha        fecha y hora\n  limpiar      limpia la pantalla\n\n<span class="t">…y hay algunos comandos ocultos. 👀</span>`,
+    ayuda: () => `Comandos:\n  quien        quién soy\n  proyectos    lista de proyectos\n  stack        tecnologías\n  contacto     cómo contactarme\n  certs        certificaciones y diplomados\n  cv           descarga mi CV en PDF\n  abrir <app>  yo · proyectos · cv · certificaciones · contacto\n  fecha        fecha y hora\n  limpiar      limpia la pantalla\n\n<span class="t">Secretos:</span> ${c('matrix')} · ${c('neofetch')} · ${c('sudo')} · ${c('cafe')} · ${c('hola')}`,
     quien: () => `${PERFIL.nombre}\n${PERFIL.puesto} · ${PERFIL.empresa}`,
     proyectos: () => PROYECTOS.map(p => `  <span class="ok">${p.nombre.padEnd(24)}</span>${p.corto}`).join('\n'),
     stack: () => STACK.join(' · '),
@@ -1084,6 +1097,9 @@ function renderTerminal(el){
     if(e.key === 'ArrowDown'){ if(hi<hist.length){hi++; inp.value = hist[hi]||'';} e.preventDefault(); return; }
     if(e.key !== 'Enter') return;
     const linea = inp.value.trim(); inp.value = '';
+    ejecutar(linea);
+  });
+  function ejecutar(linea){
     if(linea){ hist.push(linea); } hi = hist.length;
     const [c, ...args] = linea.split(/\s+/);
     out.innerHTML += `<span class="p">will@bsd:~$</span> ${linea.replace(/</g,'&lt;')}\n`;
@@ -1091,8 +1107,10 @@ function renderTerminal(el){
     const r = cmds[c.toLowerCase()] ? cmds[c.toLowerCase()](args.join(' ').toLowerCase()) : `<span class="err">Comando no encontrado: ${c.replace(/</g,'&lt;')}. Escribe “ayuda”.</span>`;
     if(r !== null) out.innerHTML += r + '\n\n';
     el.scrollTop = el.scrollHeight;
-  });
-  el.addEventListener('click', () => inp.focus());
+  }
+  // clic (o Enter con el teclado) sobre un comando resaltado = ejecutarlo
+  el.addEventListener('click', e => { const k = e.target.closest('.cmd'); if(k) ejecutar(k.dataset.cmd); if(!esTactil()) inp.focus(); });
+  el.addEventListener('keydown', e => { const k = e.target.closest?.('.cmd'); if(k && e.key === 'Enter'){ e.preventDefault(); ejecutar(k.dataset.cmd); } });
   if(!esTactil()) setTimeout(() => inp.focus(), 50);
 }
 
@@ -1444,6 +1462,9 @@ bloqueo.focus();
   let W, H, dpr, estrellas = [];
   const DERIVA = {vel:[2.5,6,13], dx:-1, dy:.35};  // px por segundo por capa y dirección
   let mx = 0, my = 0, cx = 0, cy = 0;   // objetivo y valor suavizado (-1..1)
+  // Gravedad: el puntero atrae a las estrellas cercanas como un pequeño hoyo negro.
+  const GRAV = { radio: 230, jalon: .72, giro: .28, capa: [.6, .85, 1] };   // radio en px; jalon/giro: fuerza radial y tangencial
+  let gx = 0, gy = 0, gActiva = 0, gObjetivo = 0;   // posición del puntero (px de pantalla) e intensidad 0..1 suavizada
   // Cometa: cruza despacio la parte baja de la pantalla (debajo del avatar)
   const COMETA = {dur:16000, pausa:[4000,9000]};  // ms que tarda en cruzar y espera entre pasadas
   let cometa = null, sigCometa = 1500;
@@ -1582,7 +1603,7 @@ bloqueo.focus();
     const escala = Math.min(1, Math.max(.3, innerWidth*innerHeight / (1440*900)));
     CAPAS.forEach((c,i) => { for(let k=0;k<Math.round(c.n*escala);k++) estrellas.push({
       x:Math.random()*W, y:Math.random()*H, r:(c.r[0]+Math.random()*(c.r[1]-c.r[0]))*dpr,
-      capa:i, fase:Math.random()*6.28, vel:.6+Math.random()*1.6,
+      capa:i, fase:Math.random()*6.28, vel:.6+Math.random()*1.6, ox:0, oy:0,
       tinte:'255,255,255' }); });
   }
   function cuadro(t){
@@ -1591,12 +1612,26 @@ bloqueo.focus();
     cx += (mx-cx)*.06; cy += (my-cy)*.06;
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle = '#fff';
+    gActiva += (gObjetivo - gActiva) * .08;   // la gravedad aparece y se apaga suavemente
+    const R = GRAV.radio * dpr, px = gx * dpr, py = gy * dpr;
     for(const s of estrellas){
       const c = CAPAS[s.capa], m = c.p*dpr;
       // deriva constante: las capas cercanas avanzan más rápido (efecto de viaje)
       const d = (t/1000) * DERIVA.vel[s.capa] * dpr;
       let x = (s.x - cx*m + d*DERIVA.dx) % W, y = (s.y - cy*m + d*DERIVA.dy) % H;
       if(x<0) x+=W; if(y<0) y+=H;
+      // gravedad: jala hacia el puntero (con un ligero remolino) y al alejarse regresa a su lugar
+      let tx = 0, ty = 0;
+      if(gActiva > .01){
+        const dx = px - x, dy = py - y, dist = Math.hypot(dx, dy);
+        if(dist < R && dist > .5){
+          const f = (1 - dist / R) ** 1.4 * gActiva * GRAV.capa[s.capa];
+          tx = (dx * GRAV.jalon - dy * GRAV.giro) * f;
+          ty = (dy * GRAV.jalon + dx * GRAV.giro) * f;
+        }
+      }
+      s.ox += (tx - s.ox) * .12; s.oy += (ty - s.oy) * .12;
+      x += s.ox; y += s.oy;
       const brillo = c.a*(.65+.35*Math.sin(t/1000*s.vel+s.fase));
       ctx.globalAlpha = brillo;   // más rápido que crear un color rgba() por estrella
       ctx.beginPath(); ctx.arc(x,y,s.r,0,6.283); ctx.fill();
@@ -1619,7 +1654,12 @@ bloqueo.focus();
     }
     if(!quieto) requestAnimationFrame(cuadro);
   }
-  addEventListener('pointermove', e => { mx = e.clientX/innerWidth*2-1; my = e.clientY/innerHeight*2-1; });
+  addEventListener('pointermove', e => { mx = e.clientX/innerWidth*2-1; my = e.clientY/innerHeight*2-1;
+    gx = e.clientX; gy = e.clientY; if(e.pointerType !== 'touch' || e.buttons) gObjetivo = 1; });
+  addEventListener('pointerdown', e => { gx = e.clientX; gy = e.clientY; gObjetivo = 1; });
+  addEventListener('pointerup', e => { if(e.pointerType === 'touch') gObjetivo = 0; });   // en celular: solo mientras el dedo toca
+  document.documentElement.addEventListener('pointerleave', () => gObjetivo = 0);
+  addEventListener('blur', () => gObjetivo = 0);
   addEventListener('deviceorientation', e => { if(e.gamma!=null){ mx = Math.max(-1,Math.min(1,e.gamma/30)); my = Math.max(-1,Math.min(1,(e.beta-45)/30)); } });
   addEventListener('resize', () => { crear(); if(quieto) cuadro(0); });
   crear(); requestAnimationFrame(cuadro);
