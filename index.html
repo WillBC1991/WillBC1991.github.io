@@ -1621,14 +1621,29 @@ const offY = depth => -M - mouse.y * CONFIG.parallax * depth;
 function drawLayer(img, depth, dx = 0, dy = 0) {
   ctx.drawImage(img, offX(depth) + dx, offY(depth) + dy, TW, TH);
 }
+// Deriva: el cielo avanza despacio y sin fin, las capas cercanas más rápido (sensación de viaje)
+const DERIVA = { vel: 15, dx: -1, dy: 0.35 };   // px por segundo de la capa más cercana y dirección
+let deriva = 0;                                 // segundos acumulados de deriva
+const envolver = (a, n) => ((a % n) + n) % n;
+const derivaX = depth => deriva * DERIVA.vel * depth * DERIVA.dx;
+const derivaY = depth => deriva * DERIVA.vel * depth * DERIVA.dy;
+// Capa de estrellas con deriva: se dibuja en mosaico de 2x2 para que nunca se vea el borde
+function drawStars(layer) {
+  const x = offX(layer.depth) + envolver(derivaX(layer.depth), TW);
+  const y = offY(layer.depth) + envolver(derivaY(layer.depth), TH);
+  ctx.drawImage(layer.canvas, x, y, TW, TH);
+  ctx.drawImage(layer.canvas, x - TW, y, TW, TH);
+  ctx.drawImage(layer.canvas, x, y - TH, TW, TH);
+  ctx.drawImage(layer.canvas, x - TW, y - TH, TW, TH);
+}
 function drawTwinkles(t, depth) {
-  const ox = offX(depth), oy = offY(depth);
+  const ox = offX(depth), oy = offY(depth), ddx = derivaX(depth), ddy = derivaY(depth);
   for (const s of twinkles) {
     const a = s.a * 0.7 * (0.5 + 0.5 * Math.sin(t * s.f * 3 + s.ph));
     if (a < 0.02) continue;
     const r = s.r * 3.2;
     ctx.globalAlpha = a;
-    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+    ctx.drawImage(sprite, envolver(s.x + ddx, TW) + ox - r, envolver(s.y + ddy, TH) + oy - r, r * 2, r * 2);
   }
   ctx.globalAlpha = 1;
 }
@@ -1661,6 +1676,7 @@ function loop(now) {
   const k = REDUCE ? 0.15 : 1;
   const dt = real * CONFIG.velocidad * k;
   time += dt;
+  deriva += dt;
   const follow = REDUCE ? 0 : Math.min(1, real * 2.4);
   mouse.x += ((REDUCE ? 0 : mouse.tx) - mouse.x) * follow;
   mouse.y += ((REDUCE ? 0 : mouse.ty) - mouse.y) * follow;
@@ -1753,10 +1769,39 @@ function makeCore(rand) {
   return [c, s];
 }
 
+// Cometa: cruza despacio la parte baja de la pantalla, debajo de tu nombre (el mismo del cielo original)
+const COMETA = { dur: 16, pausa: [4, 9] };   // segundos que tarda en cruzar y espera entre pasadas
+let cometa = null, sigCometa = 1.5;
+function dibujarCometa(t) {
+  if (REDUCE) return;
+  if (!cometa) {
+    if (t > sigCometa) cometa = { t0: t, izq: Math.random() < 0.5, y0: (0.84 + Math.random() * 0.06) * H, caida: (0.02 + Math.random() * 0.04) * H };
+    return;
+  }
+  const k = (t - cometa.t0) / COMETA.dur;
+  if (k >= 1) { cometa = null; sigCometa = t + COMETA.pausa[0] + Math.random() * (COMETA.pausa[1] - COMETA.pausa[0]); return; }
+  const margen = 300, x0 = cometa.izq ? -margen : W + margen, x1 = cometa.izq ? W + margen : -margen;
+  const x = x0 + (x1 - x0) * k - mouse.x * 30, y = cometa.y0 + cometa.caida * k - mouse.y * 30;
+  const dx = x1 - x0, dy = cometa.caida, len = Math.hypot(dx, dy);
+  const cola = 220, tx = x - dx / len * cola, ty = y - dy / len * cola;
+  const fade = Math.min(1, k * 8, (1 - k) * 8);   // entra y sale suave
+  const g = ctx.createLinearGradient(x, y, tx, ty);
+  g.addColorStop(0, `rgba(255,255,255,${0.85 * fade})`);
+  g.addColorStop(0.25, `rgba(255,255,255,${0.35 * fade})`);
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  const nx = -dy / len, ny = dx / len, ancho = 2.2;   // cola en forma de cuña
+  ctx.beginPath();
+  ctx.moveTo(x + nx * ancho, y + ny * ancho); ctx.lineTo(tx, ty); ctx.lineTo(x - nx * ancho, y - ny * ancho); ctx.closePath();
+  ctx.fillStyle = g; ctx.fill();
+  const h = ctx.createRadialGradient(x, y, 0, x, y, 10);   // cabeza con halo
+  h.addColorStop(0, `rgba(255,255,255,${fade})`); h.addColorStop(0.3, `rgba(255,255,255,${0.4 * fade})`); h.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, TAU); ctx.fillStyle = h; ctx.fill();
+}
+
 function frame(t) {
-  drawLayer(stars[0].canvas, stars[0].depth);
+  drawStars(stars[0]);
   drawLayer(smoke, 0.3, Math.sin(t * 0.02) * 12, Math.cos(t * 0.017) * 8);
-  drawLayer(stars[1].canvas, stars[1].depth);
+  drawStars(stars[1]);
 
   const centro = W < 720 ? CONFIG.centroMovil : CONFIG.centro;
   const cx = W * centro[0] - mouse.x * CONFIG.parallax * 0.65;
@@ -1771,7 +1816,8 @@ function frame(t) {
   ctx.save(); ctx.rotate(t * 0.03); ctx.drawImage(coreCanvas, -s, -s, 2 * s, 2 * s); ctx.restore();
   ctx.restore();
 
-  drawLayer(stars[2].canvas, stars[2].depth);
+  drawStars(stars[2]);
+  dibujarCometa(t);
   drawTwinkles(t, stars[1].depth);
 }
 
@@ -1951,14 +1997,29 @@ const offY = depth => -M - mouse.y * CONFIG.parallax * depth;
 function drawLayer(img, depth, dx = 0, dy = 0) {
   ctx.drawImage(img, offX(depth) + dx, offY(depth) + dy, TW, TH);
 }
+// Deriva: el cielo avanza despacio y sin fin, las capas cercanas más rápido (sensación de viaje)
+const DERIVA = { vel: 15, dx: -1, dy: 0.35 };   // px por segundo de la capa más cercana y dirección
+let deriva = 0;                                 // segundos acumulados de deriva
+const envolver = (a, n) => ((a % n) + n) % n;
+const derivaX = depth => deriva * DERIVA.vel * depth * DERIVA.dx;
+const derivaY = depth => deriva * DERIVA.vel * depth * DERIVA.dy;
+// Capa de estrellas con deriva: se dibuja en mosaico de 2x2 para que nunca se vea el borde
+function drawStars(layer) {
+  const x = offX(layer.depth) + envolver(derivaX(layer.depth), TW);
+  const y = offY(layer.depth) + envolver(derivaY(layer.depth), TH);
+  ctx.drawImage(layer.canvas, x, y, TW, TH);
+  ctx.drawImage(layer.canvas, x - TW, y, TW, TH);
+  ctx.drawImage(layer.canvas, x, y - TH, TW, TH);
+  ctx.drawImage(layer.canvas, x - TW, y - TH, TW, TH);
+}
 function drawTwinkles(t, depth) {
-  const ox = offX(depth), oy = offY(depth);
+  const ox = offX(depth), oy = offY(depth), ddx = derivaX(depth), ddy = derivaY(depth);
   for (const s of twinkles) {
     const a = s.a * 0.7 * (0.5 + 0.5 * Math.sin(t * s.f * 3 + s.ph));
     if (a < 0.02) continue;
     const r = s.r * 3.2;
     ctx.globalAlpha = a;
-    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+    ctx.drawImage(sprite, envolver(s.x + ddx, TW) + ox - r, envolver(s.y + ddy, TH) + oy - r, r * 2, r * 2);
   }
   ctx.globalAlpha = 1;
 }
@@ -1991,6 +2052,7 @@ function loop(now) {
   const k = REDUCE ? 0.15 : 1;
   const dt = real * CONFIG.velocidad * k;
   time += dt;
+  deriva += dt;
   const follow = REDUCE ? 0 : Math.min(1, real * 2.4);
   mouse.x += ((REDUCE ? 0 : mouse.tx) - mouse.x) * follow;
   mouse.y += ((REDUCE ? 0 : mouse.ty) - mouse.y) * follow;
@@ -2066,15 +2128,15 @@ function stepTrail(t, dt) {
 
 function frame(t, dt) {
   const dx = Math.sin(t * 0.03) * 16, dy = Math.cos(t * 0.021) * 10;
-  drawLayer(stars[0].canvas, stars[0].depth);
+  drawStars(stars[0]);
   drawLayer(smokeB, 0.28, -dx, -dy);
-  drawLayer(stars[1].canvas, stars[1].depth);
+  drawStars(stars[1]);
   drawLayer(smokeA, 0.4, dx, dy);
   stepTrail(t, dt);
   ctx.globalCompositeOperation = 'lighter';
   drawLayer(trail, 0.6);
   ctx.globalCompositeOperation = 'source-over';
-  drawLayer(stars[2].canvas, stars[2].depth);
+  drawStars(stars[2]);
   drawTwinkles(t, stars[1].depth);
 }
 
@@ -2255,14 +2317,29 @@ const offY = depth => -M - mouse.y * CONFIG.parallax * depth;
 function drawLayer(img, depth, dx = 0, dy = 0) {
   ctx.drawImage(img, offX(depth) + dx, offY(depth) + dy, TW, TH);
 }
+// Deriva: el cielo avanza despacio y sin fin, las capas cercanas más rápido (sensación de viaje)
+const DERIVA = { vel: 15, dx: -1, dy: 0.35 };   // px por segundo de la capa más cercana y dirección
+let deriva = 0;                                 // segundos acumulados de deriva
+const envolver = (a, n) => ((a % n) + n) % n;
+const derivaX = depth => deriva * DERIVA.vel * depth * DERIVA.dx;
+const derivaY = depth => deriva * DERIVA.vel * depth * DERIVA.dy;
+// Capa de estrellas con deriva: se dibuja en mosaico de 2x2 para que nunca se vea el borde
+function drawStars(layer) {
+  const x = offX(layer.depth) + envolver(derivaX(layer.depth), TW);
+  const y = offY(layer.depth) + envolver(derivaY(layer.depth), TH);
+  ctx.drawImage(layer.canvas, x, y, TW, TH);
+  ctx.drawImage(layer.canvas, x - TW, y, TW, TH);
+  ctx.drawImage(layer.canvas, x, y - TH, TW, TH);
+  ctx.drawImage(layer.canvas, x - TW, y - TH, TW, TH);
+}
 function drawTwinkles(t, depth) {
-  const ox = offX(depth), oy = offY(depth);
+  const ox = offX(depth), oy = offY(depth), ddx = derivaX(depth), ddy = derivaY(depth);
   for (const s of twinkles) {
     const a = s.a * 0.7 * (0.5 + 0.5 * Math.sin(t * s.f * 3 + s.ph));
     if (a < 0.02) continue;
     const r = s.r * 3.2;
     ctx.globalAlpha = a;
-    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+    ctx.drawImage(sprite, envolver(s.x + ddx, TW) + ox - r, envolver(s.y + ddy, TH) + oy - r, r * 2, r * 2);
   }
   ctx.globalAlpha = 1;
 }
@@ -2295,6 +2372,7 @@ function loop(now) {
   const k = REDUCE ? 0.15 : 1;
   const dt = real * CONFIG.velocidad * k;
   time += dt;
+  deriva += dt;
   const follow = REDUCE ? 0 : Math.min(1, real * 2.4);
   mouse.x += ((REDUCE ? 0 : mouse.tx) - mouse.x) * follow;
   mouse.y += ((REDUCE ? 0 : mouse.ty) - mouse.y) * follow;
@@ -2346,12 +2424,12 @@ function spawnConstellation(t) {
   for (let tries = 0; tries < 25; tries++) {
     const i = Math.floor(crand() * bright.length), s = bright[i];
     if (used.has(i)) continue;
-    const sx = s.x - M, sy = s.y - M;
+    const sx = s.wx - M, sy = s.wy - M;
     if (sx < W * 0.08 || sx > W * 0.92 || sy < H * 0.1 || sy > H * 0.9) continue;
-    if (active.some(c => Math.hypot(c.cx - s.x, c.cy - s.y) < CONFIG.radio * 1.6)) continue;
+    if (active.some(c => Math.hypot(bright[c.idx[0]].wx - s.wx, bright[c.idx[0]].wy - s.wy) < CONFIG.radio * 1.6)) continue;
     const k = 4 + Math.floor(crand() * 4);
     const near = bright
-      .map((o, j) => ({ j, d: Math.hypot(o.x - s.x, o.y - s.y) }))
+      .map((o, j) => ({ j, d: Math.hypot(o.wx - s.wx, o.wy - s.wy) }))
       .filter(o => !used.has(o.j) && o.d < CONFIG.radio)
       .sort((a, b) => a.d - b.d)
       .slice(0, k);
@@ -2362,13 +2440,13 @@ function spawnConstellation(t) {
       let best = null;
       for (const a of inTree) for (let b = 0; b < idx.length; b++) {
         if (inTree.includes(b)) continue;
-        const pa = bright[idx[a]], pb = bright[idx[b]], d = Math.hypot(pa.x - pb.x, pa.y - pb.y);
+        const pa = bright[idx[a]], pb = bright[idx[b]], d = Math.hypot(pa.wx - pb.wx, pa.wy - pb.wy);
         if (!best || d < best.d) best = { a, b, d };
       }
       edges.push([idx[best.a], idx[best.b]]);
       inTree.push(best.b);
     }
-    active.push({ idx, edges, born: t, cx: s.x, cy: s.y });
+    active.push({ idx, edges, born: t });
     return;
   }
 }
@@ -2376,9 +2454,12 @@ function spawnConstellation(t) {
 const easeOut = x => 1 - Math.pow(1 - x, 3);
 
 function frame(t, dt) {
-  drawLayer(stars[0].canvas, stars[0].depth);
+  drawStars(stars[0]);
   drawLayer(smoke, 0.3, Math.sin(t * 0.02) * 14, Math.cos(t * 0.016) * 9);
-  drawLayer(stars[1].canvas, stars[1].depth);
+  drawStars(stars[1]);
+
+  const bdx = derivaX(DEPTH_BRIGHT), bdy = derivaY(DEPTH_BRIGHT);
+  for (const s of bright) { s.wx = envolver(s.x + bdx, TW); s.wy = envolver(s.y + bdy, TH); }
 
   // ciclo de vida de las constelaciones
   const T = CONFIG.tiempos, total = T.dibujar + T.mostrar + T.borrar;
@@ -2402,8 +2483,9 @@ function frame(t, dt) {
       const p = easeOut(clamp(grow - i));
       if (p <= 0) return;
       const a = bright[ia], b = bright[ib];
-      ctx.moveTo(a.x + ox, a.y + oy);
-      ctx.lineTo(a.x + ox + (b.x - a.x) * p, a.y + oy + (b.y - a.y) * p);
+      if (Math.hypot(b.wx - a.wx, b.wy - a.wy) > CONFIG.radio * 1.8) return;   // una estrella dio la vuelta al borde
+      ctx.moveTo(a.wx + ox, a.wy + oy);
+      ctx.lineTo(a.wx + ox + (b.wx - a.wx) * p, a.wy + oy + (b.wy - a.wy) * p);
       bright[ia].glow = Math.max(bright[ia].glow, alpha);
       if (p >= 1) bright[ib].glow = Math.max(bright[ib].glow, alpha);
     });
@@ -2415,7 +2497,7 @@ function frame(t, dt) {
     const tw = 0.75 + 0.25 * Math.sin(t * s.f * 2.2 + s.ph);
     const r = s.r * (2.6 + s.glow * 1.6);
     ctx.globalAlpha = Math.min(1, s.a * tw + s.glow * 0.35);
-    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+    ctx.drawImage(sprite, s.wx + ox - r, s.wy + oy - r, r * 2, r * 2);
   }
   ctx.globalAlpha = 1;
   drawTwinkles(t, stars[1].depth);
