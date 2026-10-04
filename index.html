@@ -399,6 +399,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .ventana.max .redim{display:none}
 body.redimensionando,body.redimensionando *{cursor:nwse-resize!important;user-select:none!important}
 
+/* Estrellas fugaces al abrir una app: encima de las ventanas, debajo del menú y los avisos, sin bloquear clics */
+#fugaces{position:absolute;inset:0;width:100%;height:100%;z-index:99990;pointer-events:none}
+
 /* Secreto: lluvia de Matrix */
 #matrix{position:fixed;inset:0;z-index:500;background:#000;cursor:pointer}
 #matrix p{position:absolute;left:50%;bottom:8vh;transform:translateX(-50%);margin:0;font-family:var(--mono);font-size:.82rem;color:#3dff7a;opacity:.75;text-shadow:0 0 8px #00ff55}
@@ -709,7 +712,8 @@ function abrir(id){
   const app = APPS[id]; if(!app) return;
   cerrarMenu();
   if(!abiertas[id] && !restaurando) contar('app/' + id, 'Abrió ' + app.titulo);
-  if(abiertas[id]){ const v = abiertas[id]; v.classList.remove('min'); enfocar(v); return v; }
+  if(abiertas[id]){ const v = abiertas[id]; if(v.classList.contains('min')) fugaces(); v.classList.remove('min'); enfocar(v); return v; }
+  if(!restaurando) fugaces();
   const v = document.createElement('section');
   v.className = 'ventana' + (app.clase ? ' ' + app.clase : '') + (esTabletaVertical() ? ' max' : '');   // en tableta vertical se abren maximizadas
   v.dataset.app = id;
@@ -740,6 +744,61 @@ function abrir(id){
   enfocar(v); pintarDock();
   return v;
 }
+
+/* ================= Estrellas fugaces al abrir una app ================= */
+// Cada vez que se abre una app (o vuelve del dock) cruza una ráfaga corta de estrellas fugaces, todas en la
+// misma dirección como una lluvia real. Dura ~1.5 s y no bloquea clics. Con "reducir movimiento" no aparecen.
+const fugaces = (() => {
+  const FUGAZ = { porRafaga:[3,5], escalon:150, dur:[650,1000], largo:[110,220], grosor:[1.1,2], max:14 };
+  const azar = ([a, b]) => a + Math.random() * (b - a);
+  let cv = null, c = null, lista = [], raf = 0, dpr = 1;
+  function medir(){ dpr = Math.min(devicePixelRatio || 1, 2); cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; }
+  function preparar(){
+    if(cv) return;
+    cv = document.createElement('canvas'); cv.id = 'fugaces'; cv.setAttribute('aria-hidden', 'true');
+    document.getElementById('escritorio').appendChild(cv);
+    c = cv.getContext('2d');
+    medir(); addEventListener('resize', medir);
+  }
+  function cuadro(t){
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, innerWidth, innerHeight);
+    lista = lista.filter(s => t < s.t0 + s.dur);
+    for(const s of lista){
+      const k = (t - s.t0) / s.dur; if(k < 0) continue;
+      const avance = 1 - Math.pow(1 - k, 2);                                     // sale rápido y frena
+      const alfa = k < .15 ? k / .15 : 1 - Math.pow((k - .15) / .85, 2);         // se enciende y se apaga
+      const cola = s.largo * Math.min(1, k * 3) * (1 - k * .4);                  // la cola crece al arrancar
+      const cx = Math.cos(s.ang), cy = Math.sin(s.ang);
+      const hx = s.x + cx * s.dist * avance, hy = s.y + cy * s.dist * avance, tx = hx - cx * cola, ty = hy - cy * cola;
+      const g = c.createLinearGradient(tx, ty, hx, hy);
+      g.addColorStop(0, 'rgba(160,190,255,0)'); g.addColorStop(1, `rgba(238,244,255,${alfa})`);
+      c.strokeStyle = g; c.lineWidth = s.grosor; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(tx, ty); c.lineTo(hx, hy); c.stroke();
+      const r = s.grosor * 6, h = c.createRadialGradient(hx, hy, 0, hx, hy, r);   // cabeza brillante
+      h.addColorStop(0, `rgba(255,255,255,${alfa})`); h.addColorStop(1, 'rgba(170,200,255,0)');
+      c.fillStyle = h; c.beginPath(); c.arc(hx, hy, r, 0, Math.PI * 2); c.fill();
+    }
+    if(lista.length) raf = requestAnimationFrame(cuadro);
+    else { c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height); raf = 0; }
+  }
+  return function rafaga(){
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    preparar();
+    const izq = Math.random() < .5, base = azar([22, 36]) * Math.PI / 180;
+    const ang = izq ? Math.PI - base : base;                                       // hacia abajo, a la izquierda o derecha
+    const W = innerWidth, H = innerHeight, ahora = performance.now();
+    const n = Math.round(azar(FUGAZ.porRafaga));
+    for(let i = 0; i < n && lista.length < FUGAZ.max; i++){
+      lista.push({
+        t0: ahora + i * FUGAZ.escalon + Math.random() * 90,
+        x: (izq ? azar([.35, 1.05]) : azar([-.05, .65])) * W, y: azar([-.05, .45]) * H,
+        ang: ang + azar([-.05, .05]), dist: Math.min(azar([280, 520]), Math.hypot(W, H) * .55),
+        dur: azar(FUGAZ.dur), largo: azar(FUGAZ.largo), grosor: azar(FUGAZ.grosor)
+      });
+    }
+    if(!raf) raf = requestAnimationFrame(cuadro);
+  };
+})();
 
 function enfocar(v){
   document.querySelectorAll('.ventana').forEach(w => w.classList.remove('activa'));
