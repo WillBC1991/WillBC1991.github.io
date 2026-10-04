@@ -64,11 +64,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .fondo{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
 .fondo #nebulosa{position:absolute;inset:-8%;width:116%;height:116%;will-change:transform;filter:blur(28px)}
 .fondo #estrellas{position:absolute;inset:0;width:100%;height:100%}
-/* Andrómeda a lo lejos: solo en el escritorio, pequeña, tenue y con movimiento muy lento */
-.fondo #andromeda{position:absolute;top:calc(7vh + env(safe-area-inset-top,0px));right:9vw;width:clamp(150px,21vw,320px);height:auto;
-  opacity:0;will-change:transform,opacity,filter;pointer-events:none}
-@media (prefers-reduced-motion:reduce){ .fondo.con-andromeda #andromeda{opacity:.75;filter:blur(.5px)} }
-@media (max-width:720px){ .fondo #andromeda{top:calc(175px + env(safe-area-inset-top,0px));right:5vw;width:42vw} }
+/* Universo de la pantalla de inicio: cubre el fondo en bloqueo y login (el login lo desenfoca como cristal);
+   en el escritorio se desvanece y quedan las estrellas con constelaciones */
+.fondo #universo,.fondo #universoLogin,.fondo #universoEscritorio{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;transition:opacity .6s ease}
+.fondo #universo.oculto,.fondo #universoLogin.oculto,.fondo #universoEscritorio.oculto{opacity:0}
 .fondo .logo{position:absolute;left:50%;top:46%;width:min(42vh,60vw);aspect-ratio:380/460;
   background:url("data:image/webp;base64,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") center/contain no-repeat;
   opacity:.13;transform:translate(-50%,-50%);will-change:transform;
@@ -98,7 +97,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 /* ---------- Inicio de sesión ---------- */
 .login{position:fixed;inset:0;z-index:101;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
   padding:env(safe-area-inset-top,0px) 24px env(safe-area-inset-bottom,0px);
-  background:radial-gradient(60% 60% at 50% 45%, rgba(0,0,0,.25), rgba(0,0,0,.65));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:radial-gradient(60% 60% at 50% 45%, rgba(0,0,0,.25), rgba(0,0,0,.65));
   font-family:"Inter",Arial,sans-serif;opacity:0;visibility:hidden;transition:opacity .45s, visibility .45s}
 .login.on{opacity:1;visibility:visible}
 .login .avatar{width:132px;height:132px;font-size:2.8rem;box-shadow:0 0 0 5px rgba(255,255,255,.14), 0 20px 50px -10px rgba(0,0,0,.8);
@@ -463,7 +462,7 @@ body.redimensionando,body.redimensionando *{cursor:nwse-resize!important;user-se
     <p>Activa JavaScript para ver el portafolio completo.</p>
   </main>
 </noscript>
-<div class="fondo" aria-hidden="true"><canvas id="nebulosa"></canvas><canvas id="andromeda"></canvas><canvas id="estrellas"></canvas><div class="logo" id="logoFondo"></div></div>
+<div class="fondo" aria-hidden="true"><canvas id="nebulosa"></canvas><canvas id="estrellas"></canvas><canvas id="universo"></canvas><canvas id="universoLogin" class="oculto"></canvas><canvas id="universoEscritorio" class="oculto"></canvas><div class="logo" id="logoFondo"></div></div>
 
 <!-- Bloqueo -->
 <section class="bloqueo" id="bloqueo" tabindex="0" aria-label="Pantalla de bloqueo. Presiona cualquier tecla para entrar.">
@@ -1334,6 +1333,7 @@ function desbloquear(){
   if(estado !== 'bloqueo') return;
   estado = 'login';
   bloqueo.classList.add('fuera');
+  universoInicio.ocultar(); universoLogin.mostrar();   // la segunda pantalla tiene su propia nebulosa
   login.classList.remove('cargando'); login.classList.add('on');
   puntos.innerHTML = '<span class="cursor"></span>'; aviso.textContent = '';
   // se escribe sola la contraseña
@@ -1349,14 +1349,12 @@ function desbloquear(){
   timers.push(setTimeout(entrar, 500 + total*95 + 2200));
 }
 
-let timerAndromeda = null;
 function entrar(){
   if(estado !== 'login') return;
   limpiarTimers(); estado = 'escritorio';
   login.classList.remove('on');
   escritorio.classList.add('listo');
-  clearTimeout(timerAndromeda);
-  timerAndromeda = setTimeout(() => { if(estado !== 'bloqueo' && estado !== 'login') document.querySelector('.fondo').classList.add('con-andromeda'); }, 30000);   // aparece a los 30 s
+  universoLogin.ocultar(); universoEscritorio.mostrar();   // cada pantalla tiene su universo
   sonar('inicio');
   setTimeout(() => {
     login.classList.remove('cargando');
@@ -1369,6 +1367,7 @@ function volver(){
   limpiarTimers(); estado = 'bloqueo-pausa';
   login.classList.remove('on','cargando');
   bloqueo.classList.remove('fuera');
+  universoLogin.ocultar(); universoInicio.mostrar();
   setTimeout(() => { estado = 'bloqueo'; bloqueo.focus(); }, 600);
 }
 
@@ -1391,8 +1390,7 @@ document.getElementById('confX').onclick = cancelarCierre;
 confirmar.addEventListener('click', e => { if(e.target === confirmar) cancelarCierre(); });
 
 function cerrarSesion(){
-  clearTimeout(timerAndromeda);
-  document.querySelector('.fondo').classList.remove('con-andromeda');
+  universoEscritorio.ocultar(); universoInicio.mostrar();   // regresa con la pantalla de bloqueo
   cerrarDetalleCert();
   cerrarMenu(); ocultarBienvenida(); sonar('cierre');
   // no se llama a guardarVentanas(): la próxima vez que entres se reabren las mismas ventanas
@@ -1446,6 +1444,986 @@ pintarAvatares();
 pintarSonido();
 pintarDock();
 bloqueo.focus();
+
+/* ================= Universo de la pantalla de inicio (bloqueo e inicio de sesión) =================
+   Galaxia espiral vista de lado con brazos sobre una espiral logarítmica; el núcleo gira un poco más rápido
+   que el disco. Estrellas blancas en 3 capas, humo gris y parallax suave con el mouse. Semilla fija:
+   siempre se ve igual. Al entrar al escritorio se desvanece y queda el cielo con constelaciones. */
+const universoInicio = (function(){
+// Una galaxia espiral vista de lado, con brazos trazados sobre una espiral logarítmica.
+// El núcleo gira un poco más rápido que el disco (rotación diferencial), así que la
+// forma cambia muy despacio y nunca se repite igual mientras la miras.
+const CONFIG = {
+  seed: 1991,            // misma semilla = mismo universo
+  densidad: 1,           // multiplicador de estrellas y puntos de la galaxia
+  velocidad: 1,          // 0 = quieto, 2 = doble de rápido
+  brillo: 1,             // multiplicador de brillo
+  parallax: 26,          // desplazamiento máximo (px) de la capa más cercana al mover el mouse
+  humo: 0.35,            // intensidad del humo gris de fondo
+  brazos: 2,             // número de brazos espirales
+  enrollamiento: 3.4,    // cuánto se enrollan los brazos (radianes del centro al borde)
+  tamano: 0.42,          // radio de la galaxia respecto al lado menor de la pantalla
+  inclinacion: 0.55,     // 1 = vista de frente, 0.3 = muy de lado
+  angulo: -0.38,         // rotación del plano de la galaxia en pantalla (radianes)
+  centro: [0.7, 0.52],   // posición de la galaxia (0..1): a la derecha del logo, que va al centro
+  centroMovil: [0.5, 0.5], // en pantallas angostas (< 720 px) no cabe al lado: va detrás del logo
+  puntosGalaxia: 26000,  // puntos que forman los brazos
+};
+
+// ============================================================
+// Base común: semilla, ruido, estrellas en capas, humo, parallax
+// ============================================================
+const TAU = Math.PI * 2;
+const canvas = document.getElementById('universo');
+const ctx = canvas.getContext('2d', { alpha: false });
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W = 0, H = 0, DPR = 1, M = 0, TW = 0, TH = 0, AREA = 1;
+const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+let sprite, vignette, stars, twinkles;
+
+// Generador pseudoaleatorio con semilla (mulberry32)
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function gauss(rand) {
+  return Math.sqrt(-2 * Math.log(rand() || 1e-9)) * Math.cos(TAU * rand());
+}
+
+// Ruido Perlin 3D con permutación derivada de la semilla
+function makeNoise(rand) {
+  const perm = Array.from({ length: 256 }, (_, i) => i);
+  for (let i = 255; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [perm[i], perm[j]] = [perm[j], perm[i]]; }
+  const p = new Uint8Array(512);
+  for (let i = 0; i < 512; i++) p[i] = perm[i & 255];
+  const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const grad = (h, x, y, z) => {
+    const u = h < 8 ? x : y, v = h < 4 ? y : (h === 12 || h === 14 ? x : z);
+    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+  };
+  return function (x, y, z) {
+    const fx = Math.floor(x), fy = Math.floor(y), fz = Math.floor(z);
+    const X = fx & 255, Y = fy & 255, Z = fz & 255;
+    x -= fx; y -= fy; z -= fz;
+    const u = fade(x), v = fade(y), w = fade(z);
+    const A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z, B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+    return lerp(
+      lerp(lerp(grad(p[AA] & 15, x, y, z), grad(p[BA] & 15, x - 1, y, z), u),
+           lerp(grad(p[AB] & 15, x, y - 1, z), grad(p[BB] & 15, x - 1, y - 1, z), u), v),
+      lerp(lerp(grad(p[AA + 1] & 15, x, y, z - 1), grad(p[BA + 1] & 15, x - 1, y, z - 1), u),
+           lerp(grad(p[AB + 1] & 15, x, y - 1, z - 1), grad(p[BB + 1] & 15, x - 1, y - 1, z - 1), u), v), w);
+  };
+}
+function fbm(noise, x, y, z, oct) {
+  let s = 0, a = 0.5, f = 1;
+  for (let i = 0; i < oct; i++) { s += a * noise(x * f, y * f, z); a *= 0.5; f *= 2; }
+  return s;
+}
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const smoothstep = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+function offscreen(w, h) {
+  const c = document.createElement('canvas');
+  c.width = Math.ceil(w * DPR); c.height = Math.ceil(h * DPR);
+  const g = c.getContext('2d'); g.scale(DPR, DPR);
+  return [c, g];
+}
+
+// Banda galáctica diagonal (0..1): concentra estrellas y humo, como la Vía Láctea
+function band(u, v) {
+  const d = (v - 0.5) + (u - 0.5) * 0.42;
+  return Math.exp(-(d * d) / (2 * 0.17 * 0.17));
+}
+
+// Humo de galaxia en grises: ruido fbm con deformación de dominio, a baja resolución
+function makeSmoke(w, h, seedOffset, strength) {
+  const scale = 5, sw = Math.ceil(w / scale), sh = Math.ceil(h / scale);
+  const c = document.createElement('canvas'); c.width = sw; c.height = sh;
+  const g = c.getContext('2d'), img = g.createImageData(sw, sh), d = img.data;
+  const noise = makeNoise(mulberry32(CONFIG.seed + seedOffset));
+  const k = 2.4 / sh;
+  for (let y = 0, i = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++, i += 4) {
+      const nx = x * k, ny = y * k;
+      const qx = fbm(noise, nx, ny, 0.3, 4), qy = fbm(noise, nx + 5.2, ny + 1.3, 0.3, 4);
+      const v = smoothstep(-0.08, 0.5, fbm(noise, nx + 1.9 * qx, ny + 1.9 * qy, 2.7, 5));
+      const a = v * v * (0.18 + 0.82 * band(x / sw, y / sh)) * strength;
+      const shade = 140 + 70 * v;
+      d[i] = shade; d[i + 1] = shade; d[i + 2] = shade + 8; d[i + 3] = Math.min(255, a * 255);
+    }
+  }
+  g.putImageData(img, 0, 0);
+  return c;
+}
+
+// Sprite de estrella suave, reutilizado para todo lo que brilla por cuadro
+function makeSprite() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)');
+  gr.addColorStop(0.12, 'rgba(255,255,255,0.85)');
+  gr.addColorStop(0.3, 'rgba(225,232,255,0.22)');
+  gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return c;
+}
+function makeVignette() {
+  const [c, g] = offscreen(W, H);
+  const gr = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.hypot(W, H) * 0.6);
+  gr.addColorStop(0, 'rgba(0,0,0,0)');
+  gr.addColorStop(1, 'rgba(0,0,0,0.6)');
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  return c;
+}
+
+// Capas de estrellas: lejana (pequeña, tenue, se mueve poco) a cercana (grande, se mueve más)
+const LAYERS = [
+  { depth: 0.18, n: 2400, rMin: 0.35, rMax: 0.85, aMin: 0.3, aMax: 0.7 },
+  { depth: 0.45, n: 700, rMin: 0.5, rMax: 1.25, aMin: 0.45, aMax: 0.9 },
+  { depth: 0.9, n: 110, rMin: 0.8, rMax: 2.1, aMin: 0.6, aMax: 1 },
+];
+function makeStars(L, rand) {
+  const [c, g] = offscreen(TW, TH);
+  const count = Math.round(L.n * AREA * CONFIG.densidad), list = [];
+  for (let i = 0; i < count; i++) {
+    const x = rand() * TW, y = rand() * TH;
+    const r = L.rMin + Math.pow(rand(), 3) * (L.rMax - L.rMin);
+    const a = Math.min(1, (L.aMin + rand() * (L.aMax - L.aMin)) * CONFIG.brillo);
+    if (rand() > 0.45 + 0.55 * band(x / TW, y / TH)) continue; // más densidad dentro de la banda
+    list.push({ x, y, r, a });
+    if (r > 1.1) {
+      g.globalAlpha = a; g.drawImage(sprite, x - r * 2.5, y - r * 2.5, r * 5, r * 5);
+    } else {
+      g.globalAlpha = 1; g.fillStyle = `rgba(255,255,255,${a})`;
+      g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+    }
+  }
+  g.globalAlpha = 1;
+  return { ...L, canvas: c, list };
+}
+function pickTwinkles(rand, from, n) {
+  const out = [];
+  for (let i = 0; i < n && from.length; i++) {
+    const s = from[Math.floor(rand() * from.length)];
+    out.push({ ...s, f: 0.6 + rand() * 1.8, ph: rand() * TAU });
+  }
+  return out;
+}
+
+// Desplazamiento de parallax para una profundidad dada (0 = fijo, 1 = máximo)
+const offX = depth => -M - mouse.x * CONFIG.parallax * depth;
+const offY = depth => -M - mouse.y * CONFIG.parallax * depth;
+function drawLayer(img, depth, dx = 0, dy = 0) {
+  ctx.drawImage(img, offX(depth) + dx, offY(depth) + dy, TW, TH);
+}
+function drawTwinkles(t, depth) {
+  const ox = offX(depth), oy = offY(depth);
+  for (const s of twinkles) {
+    const a = s.a * 0.7 * (0.5 + 0.5 * Math.sin(t * s.f * 3 + s.ph));
+    if (a < 0.02) continue;
+    const r = s.r * 3.2;
+    ctx.globalAlpha = a;
+    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = innerWidth; H = innerHeight;
+  M = CONFIG.parallax + 32;
+  TW = W + 2 * M; TH = H + 2 * M;
+  AREA = (TW * TH) / (1920 * 1080);
+  canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  sprite = makeSprite();
+  vignette = makeVignette();
+  build();
+}
+
+// El mouse solo se usa como destino; la posición real lo sigue con suavizado
+addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  mouse.tx = e.clientX / W * 2 - 1; mouse.ty = e.clientY / H * 2 - 1;
+});
+document.addEventListener('mouseout', e => { if (!e.relatedTarget) mouse.tx = mouse.ty = 0; });
+let resizeTimer;
+addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
+
+let last = 0, time = 0, activo = false, raf = 0;
+function loop(now) {
+  const real = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+  const k = REDUCE ? 0.15 : 1;
+  const dt = real * CONFIG.velocidad * k;
+  time += dt;
+  const follow = REDUCE ? 0 : Math.min(1, real * 2.4);
+  mouse.x += ((REDUCE ? 0 : mouse.tx) - mouse.x) * follow;
+  mouse.y += ((REDUCE ? 0 : mouse.ty) - mouse.y) * follow;
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  frame(time, dt);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.drawImage(vignette, 0, 0, W, H);
+  if (activo) raf = requestAnimationFrame(loop);
+}
+// Solo se anima mientras se ve: en el escritorio se desvanece y el bucle se detiene
+function mostrar() {
+  canvas.classList.remove('oculto');
+  if (!activo) { activo = true; last = 0; raf = requestAnimationFrame(loop); }
+}
+function ocultar() {
+  canvas.classList.add('oculto');
+  setTimeout(() => { if (canvas.classList.contains('oculto')) { activo = false; cancelAnimationFrame(raf); } }, 900);
+}
+
+
+let smoke, disk, core, R;
+
+function build() {
+  const rand = mulberry32(CONFIG.seed);
+  sprite = makeSprite();
+  stars = LAYERS.map(L => makeStars(L, rand));
+  twinkles = pickTwinkles(rand, stars[1].list, 60);
+  smoke = makeSmoke(TW, TH, 41, CONFIG.humo);
+  R = Math.max(160, Math.min(W, H) * CONFIG.tamano);
+  disk = makeDisk(mulberry32(CONFIG.seed + 5));
+  core = makeCore(mulberry32(CONFIG.seed + 6));
+}
+
+function makeDisk(rand) {
+  const [c, g] = offscreen(2 * R, 2 * R);
+  g.translate(R, R);
+  g.globalCompositeOperation = 'lighter';
+  // halo difuso del disco
+  const halo = g.createRadialGradient(0, 0, 0, 0, 0, R);
+  halo.addColorStop(0, `rgba(200,205,215,${0.10 * CONFIG.brillo})`);
+  halo.addColorStop(0.5, `rgba(170,175,185,${0.035 * CONFIG.brillo})`);
+  halo.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = halo; g.beginPath(); g.arc(0, 0, R, 0, TAU); g.fill();
+
+  const B = CONFIG.brazos, n = Math.round(CONFIG.puntosGalaxia * CONFIG.densidad);
+  const armPos = (f, arm, spread) => {
+    const r = R * (0.04 + 0.96 * f) + gauss(rand) * R * 0.04;
+    const th = arm * TAU / B + CONFIG.enrollamiento * Math.log(1 + 2.2 * f) / Math.log(3.2) + gauss(rand) * spread;
+    return [Math.cos(th) * r, Math.sin(th) * r];
+  };
+  // nubes de humo a lo largo de los brazos
+  for (let i = 0; i < n / 45; i++) {
+    const f = Math.pow(rand(), 1.2), [x, y] = armPos(f, Math.floor(rand() * B), 0.22);
+    const s = R * (0.03 + rand() * 0.07);
+    g.globalAlpha = (0.05 + rand() * 0.06) * (1 - 0.5 * f) * CONFIG.brillo;
+    g.drawImage(sprite, x - s, y - s, s * 2, s * 2);
+  }
+  // estrellas de los brazos
+  g.globalAlpha = 1;
+  for (let i = 0; i < n; i++) {
+    const f = Math.pow(rand(), 1.25);
+    const [x, y] = armPos(f, Math.floor(rand() * B), 0.12 + 0.28 * (1 - f) * rand());
+    const sz = 0.5 + Math.pow(rand(), 5) * 1.6;
+    const a = (0.07 + 0.3 * rand()) * (1 - 0.55 * f) * CONFIG.brillo;
+    const shade = 200 + Math.floor(rand() * 55);
+    g.fillStyle = `rgba(${shade},${shade},${Math.min(255, shade + 10)},${Math.min(1, a)})`;
+    g.fillRect(x, y, sz, sz);
+  }
+  return c;
+}
+
+function makeCore(rand) {
+  const s = R * 0.42;
+  const [c, g] = offscreen(2 * s, 2 * s);
+  g.translate(s, s);
+  g.globalCompositeOperation = 'lighter';
+  const bulge = g.createRadialGradient(0, 0, 0, 0, 0, s);
+  bulge.addColorStop(0, `rgba(255,255,255,${0.75 * CONFIG.brillo})`);
+  bulge.addColorStop(0.08, `rgba(235,238,245,${0.45 * CONFIG.brillo})`);
+  bulge.addColorStop(0.35, `rgba(190,195,205,${0.12 * CONFIG.brillo})`);
+  bulge.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = bulge; g.beginPath(); g.arc(0, 0, s, 0, TAU); g.fill();
+  // barra central apenas insinuada
+  for (let i = 0; i < 4000 * CONFIG.densidad; i++) {
+    const x = gauss(rand) * s * 0.28, y = gauss(rand) * s * 0.11;
+    g.fillStyle = `rgba(240,242,248,${0.08 * CONFIG.brillo})`;
+    g.fillRect(x, y, 0.8, 0.8);
+  }
+  return [c, s];
+}
+
+function frame(t) {
+  drawLayer(stars[0].canvas, stars[0].depth);
+  drawLayer(smoke, 0.3, Math.sin(t * 0.02) * 12, Math.cos(t * 0.017) * 8);
+  drawLayer(stars[1].canvas, stars[1].depth);
+
+  const centro = W < 720 ? CONFIG.centroMovil : CONFIG.centro;
+  const cx = W * centro[0] - mouse.x * CONFIG.parallax * 0.65;
+  const cy = H * centro[1] - mouse.y * CONFIG.parallax * 0.65;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.translate(cx, cy);
+  ctx.rotate(CONFIG.angulo);
+  ctx.scale(1, CONFIG.inclinacion);
+  ctx.save(); ctx.rotate(t * 0.018); ctx.drawImage(disk, -R, -R, 2 * R, 2 * R); ctx.restore();
+  const [coreCanvas, s] = core;
+  ctx.save(); ctx.rotate(t * 0.03); ctx.drawImage(coreCanvas, -s, -s, 2 * s, 2 * s); ctx.restore();
+  ctx.restore();
+
+  drawLayer(stars[2].canvas, stars[2].depth);
+  drawTwinkles(t, stars[1].depth);
+}
+
+resize();
+mostrar();
+return { mostrar, ocultar };
+})();
+
+/* ================= Universo del inicio de sesión (segunda pantalla) =================
+   Nebulosa con flujo de partículas: un campo de corrientes invisible (ruido Perlin que cambia muy despacio)
+   arrastra el polvo y se ven sus estelas sobre humo gris y estrellas en capas. Semilla fija. Se construye
+   en segundo plano después de cargar la página, para que al pasar al login ya esté lista. */
+const universoLogin = (function(){
+// Un campo de flujo invisible (ruido Perlin que cambia muy despacio) arrastra miles de
+// partículas de polvo. No se dibujan los puntos sino su rastro: la nebulosa aparece
+// como la huella acumulada de una corriente que nunca se ve directamente.
+const CONFIG = {
+  seed: 1991,            // misma semilla = mismo universo
+  densidad: 1,           // multiplicador de estrellas y partículas
+  velocidad: 1,          // 0 = quieto, 2 = doble de rápido
+  brillo: 1,             // multiplicador de brillo de estrellas y polvo
+  parallax: 26,          // desplazamiento máximo (px) de la capa más cercana al mover el mouse
+  humo: 0.55,            // intensidad del humo gris de fondo
+  particulas: 1500,      // partículas de polvo en una pantalla de 1920x1080
+  estela: 0.94,          // 0.90 = estelas cortas, 0.97 = estelas largas
+  escalaFlujo: 0.0017,   // tamaño de los remolinos (menor = remolinos más grandes)
+};
+
+// ============================================================
+// Base común: semilla, ruido, estrellas en capas, humo, parallax
+// ============================================================
+const TAU = Math.PI * 2;
+const canvas = document.getElementById('universoLogin');
+const ctx = canvas.getContext('2d', { alpha: false });
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W = 0, H = 0, DPR = 1, M = 0, TW = 0, TH = 0, AREA = 1;
+const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+let sprite, vignette, stars, twinkles;
+
+// Generador pseudoaleatorio con semilla (mulberry32)
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function gauss(rand) {
+  return Math.sqrt(-2 * Math.log(rand() || 1e-9)) * Math.cos(TAU * rand());
+}
+
+// Ruido Perlin 3D con permutación derivada de la semilla
+function makeNoise(rand) {
+  const perm = Array.from({ length: 256 }, (_, i) => i);
+  for (let i = 255; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [perm[i], perm[j]] = [perm[j], perm[i]]; }
+  const p = new Uint8Array(512);
+  for (let i = 0; i < 512; i++) p[i] = perm[i & 255];
+  const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const grad = (h, x, y, z) => {
+    const u = h < 8 ? x : y, v = h < 4 ? y : (h === 12 || h === 14 ? x : z);
+    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+  };
+  return function (x, y, z) {
+    const fx = Math.floor(x), fy = Math.floor(y), fz = Math.floor(z);
+    const X = fx & 255, Y = fy & 255, Z = fz & 255;
+    x -= fx; y -= fy; z -= fz;
+    const u = fade(x), v = fade(y), w = fade(z);
+    const A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z, B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+    return lerp(
+      lerp(lerp(grad(p[AA] & 15, x, y, z), grad(p[BA] & 15, x - 1, y, z), u),
+           lerp(grad(p[AB] & 15, x, y - 1, z), grad(p[BB] & 15, x - 1, y - 1, z), u), v),
+      lerp(lerp(grad(p[AA + 1] & 15, x, y, z - 1), grad(p[BA + 1] & 15, x - 1, y, z - 1), u),
+           lerp(grad(p[AB + 1] & 15, x, y - 1, z - 1), grad(p[BB + 1] & 15, x - 1, y - 1, z - 1), u), v), w);
+  };
+}
+function fbm(noise, x, y, z, oct) {
+  let s = 0, a = 0.5, f = 1;
+  for (let i = 0; i < oct; i++) { s += a * noise(x * f, y * f, z); a *= 0.5; f *= 2; }
+  return s;
+}
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const smoothstep = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+function offscreen(w, h) {
+  const c = document.createElement('canvas');
+  c.width = Math.ceil(w * DPR); c.height = Math.ceil(h * DPR);
+  const g = c.getContext('2d'); g.scale(DPR, DPR);
+  return [c, g];
+}
+
+// Banda galáctica diagonal (0..1): concentra estrellas y humo, como la Vía Láctea
+function band(u, v) {
+  const d = (v - 0.5) + (u - 0.5) * 0.42;
+  return Math.exp(-(d * d) / (2 * 0.17 * 0.17));
+}
+
+// Humo de galaxia en grises: ruido fbm con deformación de dominio, a baja resolución
+function makeSmoke(w, h, seedOffset, strength) {
+  const scale = 5, sw = Math.ceil(w / scale), sh = Math.ceil(h / scale);
+  const c = document.createElement('canvas'); c.width = sw; c.height = sh;
+  const g = c.getContext('2d'), img = g.createImageData(sw, sh), d = img.data;
+  const noise = makeNoise(mulberry32(CONFIG.seed + seedOffset));
+  const k = 2.4 / sh;
+  for (let y = 0, i = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++, i += 4) {
+      const nx = x * k, ny = y * k;
+      const qx = fbm(noise, nx, ny, 0.3, 4), qy = fbm(noise, nx + 5.2, ny + 1.3, 0.3, 4);
+      const v = smoothstep(-0.08, 0.5, fbm(noise, nx + 1.9 * qx, ny + 1.9 * qy, 2.7, 5));
+      const a = v * v * (0.18 + 0.82 * band(x / sw, y / sh)) * strength;
+      const shade = 140 + 70 * v;
+      d[i] = shade; d[i + 1] = shade; d[i + 2] = shade + 8; d[i + 3] = Math.min(255, a * 255);
+    }
+  }
+  g.putImageData(img, 0, 0);
+  return c;
+}
+
+// Sprite de estrella suave, reutilizado para todo lo que brilla por cuadro
+function makeSprite() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)');
+  gr.addColorStop(0.12, 'rgba(255,255,255,0.85)');
+  gr.addColorStop(0.3, 'rgba(225,232,255,0.22)');
+  gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return c;
+}
+function makeVignette() {
+  const [c, g] = offscreen(W, H);
+  const gr = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.hypot(W, H) * 0.6);
+  gr.addColorStop(0, 'rgba(0,0,0,0)');
+  gr.addColorStop(1, 'rgba(0,0,0,0.6)');
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  return c;
+}
+
+// Capas de estrellas: lejana (pequeña, tenue, se mueve poco) a cercana (grande, se mueve más)
+const LAYERS = [
+  { depth: 0.18, n: 2400, rMin: 0.35, rMax: 0.85, aMin: 0.3, aMax: 0.7 },
+  { depth: 0.45, n: 700, rMin: 0.5, rMax: 1.25, aMin: 0.45, aMax: 0.9 },
+  { depth: 0.9, n: 110, rMin: 0.8, rMax: 2.1, aMin: 0.6, aMax: 1 },
+];
+function makeStars(L, rand) {
+  const [c, g] = offscreen(TW, TH);
+  const count = Math.round(L.n * AREA * CONFIG.densidad), list = [];
+  for (let i = 0; i < count; i++) {
+    const x = rand() * TW, y = rand() * TH;
+    const r = L.rMin + Math.pow(rand(), 3) * (L.rMax - L.rMin);
+    const a = Math.min(1, (L.aMin + rand() * (L.aMax - L.aMin)) * CONFIG.brillo);
+    if (rand() > 0.45 + 0.55 * band(x / TW, y / TH)) continue; // más densidad dentro de la banda
+    list.push({ x, y, r, a });
+    if (r > 1.1) {
+      g.globalAlpha = a; g.drawImage(sprite, x - r * 2.5, y - r * 2.5, r * 5, r * 5);
+    } else {
+      g.globalAlpha = 1; g.fillStyle = `rgba(255,255,255,${a})`;
+      g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+    }
+  }
+  g.globalAlpha = 1;
+  return { ...L, canvas: c, list };
+}
+function pickTwinkles(rand, from, n) {
+  const out = [];
+  for (let i = 0; i < n && from.length; i++) {
+    const s = from[Math.floor(rand() * from.length)];
+    out.push({ ...s, f: 0.6 + rand() * 1.8, ph: rand() * TAU });
+  }
+  return out;
+}
+
+// Desplazamiento de parallax para una profundidad dada (0 = fijo, 1 = máximo)
+const offX = depth => -M - mouse.x * CONFIG.parallax * depth;
+const offY = depth => -M - mouse.y * CONFIG.parallax * depth;
+function drawLayer(img, depth, dx = 0, dy = 0) {
+  ctx.drawImage(img, offX(depth) + dx, offY(depth) + dy, TW, TH);
+}
+function drawTwinkles(t, depth) {
+  const ox = offX(depth), oy = offY(depth);
+  for (const s of twinkles) {
+    const a = s.a * 0.7 * (0.5 + 0.5 * Math.sin(t * s.f * 3 + s.ph));
+    if (a < 0.02) continue;
+    const r = s.r * 3.2;
+    ctx.globalAlpha = a;
+    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = innerWidth; H = innerHeight;
+  M = CONFIG.parallax + 32;
+  TW = W + 2 * M; TH = H + 2 * M;
+  AREA = (TW * TH) / (1920 * 1080);
+  canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  sprite = makeSprite();
+  vignette = makeVignette();
+  build();
+}
+
+// El mouse solo se usa como destino; la posición real lo sigue con suavizado
+addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  mouse.tx = e.clientX / W * 2 - 1; mouse.ty = e.clientY / H * 2 - 1;
+});
+document.addEventListener('mouseout', e => { if (!e.relatedTarget) mouse.tx = mouse.ty = 0; });
+let resizeTimer;
+addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (listo) { resize(); calentar(); } }, 150); });
+
+let last = 0, time = 0, activo = false, raf = 0, listo = false;
+function loop(now) {
+  const real = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+  const k = REDUCE ? 0.15 : 1;
+  const dt = real * CONFIG.velocidad * k;
+  time += dt;
+  const follow = REDUCE ? 0 : Math.min(1, real * 2.4);
+  mouse.x += ((REDUCE ? 0 : mouse.tx) - mouse.x) * follow;
+  mouse.y += ((REDUCE ? 0 : mouse.ty) - mouse.y) * follow;
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  frame(time, dt);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.drawImage(vignette, 0, 0, W, H);
+  if (activo) raf = requestAnimationFrame(loop);
+}
+// El login dura pocos segundos: las estelas se "precalientan" para que la nebulosa ya se vea formada al aparecer
+function calentar() {
+  for (let i = 0; i < 180; i++) { time += 1 / 60; stepTrail(time, 1 / 60); }
+}
+function preparar() {
+  if (listo) return;
+  listo = true; resize(); calentar();
+}
+function mostrar() {
+  preparar();
+  canvas.classList.remove('oculto');
+  if (!activo) { activo = true; last = 0; raf = requestAnimationFrame(loop); }
+}
+function ocultar() {
+  canvas.classList.add('oculto');
+  setTimeout(() => { if (canvas.classList.contains('oculto')) { activo = false; cancelAnimationFrame(raf); } }, 900);
+}
+
+
+let smokeA, smokeB, trail, trailCtx, parts, flow, prand;
+
+function build() {
+  const rand = mulberry32(CONFIG.seed);
+  sprite = makeSprite();
+  stars = LAYERS.map(L => makeStars(L, rand));
+  twinkles = pickTwinkles(rand, stars[1].list, 70);
+  smokeA = makeSmoke(TW, TH, 11, CONFIG.humo);
+  smokeB = makeSmoke(TW, TH, 29, CONFIG.humo * 0.6);
+  [trail, trailCtx] = offscreen(TW, TH);
+  flow = makeNoise(mulberry32(CONFIG.seed + 7));
+  prand = mulberry32(CONFIG.seed + 3);
+  const n = Math.round(CONFIG.particulas * AREA * CONFIG.densidad);
+  parts = Array.from({ length: n }, () => spawn({}, true));
+}
+
+// Las partículas nacen preferentemente dentro de la banda galáctica
+function spawn(p, initial) {
+  do { p.x = prand() * TW; p.y = prand() * TH; } while (prand() > 0.12 + 0.88 * band(p.x / TW, p.y / TH));
+  p.life = 3 + prand() * 7;
+  p.age = initial ? prand() * p.life : 0;
+  return p;
+}
+
+function stepTrail(t, dt) {
+  trailCtx.globalCompositeOperation = 'destination-out';
+  trailCtx.fillStyle = `rgba(0,0,0,${1 - CONFIG.estela})`;
+  trailCtx.fillRect(0, 0, TW, TH);
+  if (dt <= 0) return;
+  trailCtx.globalCompositeOperation = 'lighter';
+  trailCtx.strokeStyle = `rgba(214,222,236,${0.11 * CONFIG.brillo})`;
+  trailCtx.lineWidth = 0.8;
+  trailCtx.beginPath();
+  const s = CONFIG.escalaFlujo, z = t * 0.035, v = 28 * dt;
+  for (const p of parts) {
+    const a = flow(p.x * s, p.y * s, z) * TAU * 1.4;
+    const nx = p.x + Math.cos(a) * v, ny = p.y + Math.sin(a) * v;
+    trailCtx.moveTo(p.x, p.y); trailCtx.lineTo(nx, ny);
+    p.x = nx; p.y = ny; p.age += dt;
+    if (p.age > p.life || nx < 0 || ny < 0 || nx > TW || ny > TH) spawn(p, false);
+  }
+  trailCtx.stroke();
+}
+
+function frame(t, dt) {
+  const dx = Math.sin(t * 0.03) * 16, dy = Math.cos(t * 0.021) * 10;
+  drawLayer(stars[0].canvas, stars[0].depth);
+  drawLayer(smokeB, 0.28, -dx, -dy);
+  drawLayer(stars[1].canvas, stars[1].depth);
+  drawLayer(smokeA, 0.4, dx, dy);
+  stepTrail(t, dt);
+  ctx.globalCompositeOperation = 'lighter';
+  drawLayer(trail, 0.6);
+  ctx.globalCompositeOperation = 'source-over';
+  drawLayer(stars[2].canvas, stars[2].depth);
+  drawTwinkles(t, stars[1].depth);
+}
+
+setTimeout(preparar, 1500);
+return { mostrar, ocultar };
+})();
+
+/* ================= Universo del escritorio (tercera pantalla) =================
+   Campo de estrellas en capas con humo gris. De vez en cuando un grupo de estrellas vecinas se une con
+   líneas finas (el camino más corto que las conecta), se sostiene unos segundos y se borra. Semilla fija:
+   misma secuencia de constelaciones en cada visita. Se construye en segundo plano tras cargar la página. */
+const universoEscritorio = (function(){
+// Un campo de estrellas en capas donde, de vez en cuando, un grupo de estrellas vecinas se
+// une con líneas finas (el árbol de distancias más cortas entre ellas), se sostiene unos
+// segundos y se borra. Como si alguien dibujara figuras en el cielo y luego las olvidara.
+const CONFIG = {
+  seed: 1991,            // misma semilla = mismo universo y misma secuencia de constelaciones
+  densidad: 1,           // multiplicador de estrellas
+  velocidad: 1,          // 0 = quieto, 2 = doble de rápido
+  brillo: 1,             // multiplicador de brillo de estrellas y líneas
+  parallax: 26,          // desplazamiento máximo (px) de la capa más cercana al mover el mouse
+  humo: 0.45,            // intensidad del humo gris de fondo
+  estrellasBrillantes: 170, // estrellas que pueden formar constelaciones (en 1920x1080)
+  maxConstelaciones: 3,  // cuántas pueden verse a la vez
+  intervalo: 3.2,        // segundos promedio entre una constelación nueva y la siguiente
+  radio: 230,            // distancia máxima (px) entre estrellas de una misma constelación
+  tiempos: { dibujar: 2.6, mostrar: 5, borrar: 2.4 }, // segundos de cada fase
+};
+
+// ============================================================
+// Base común: semilla, ruido, estrellas en capas, humo, parallax
+// ============================================================
+const TAU = Math.PI * 2;
+const canvas = document.getElementById('universoEscritorio');
+const ctx = canvas.getContext('2d', { alpha: false });
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W = 0, H = 0, DPR = 1, M = 0, TW = 0, TH = 0, AREA = 1;
+const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+let sprite, vignette, stars, twinkles;
+
+// Generador pseudoaleatorio con semilla (mulberry32)
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function gauss(rand) {
+  return Math.sqrt(-2 * Math.log(rand() || 1e-9)) * Math.cos(TAU * rand());
+}
+
+// Ruido Perlin 3D con permutación derivada de la semilla
+function makeNoise(rand) {
+  const perm = Array.from({ length: 256 }, (_, i) => i);
+  for (let i = 255; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [perm[i], perm[j]] = [perm[j], perm[i]]; }
+  const p = new Uint8Array(512);
+  for (let i = 0; i < 512; i++) p[i] = perm[i & 255];
+  const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const grad = (h, x, y, z) => {
+    const u = h < 8 ? x : y, v = h < 4 ? y : (h === 12 || h === 14 ? x : z);
+    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+  };
+  return function (x, y, z) {
+    const fx = Math.floor(x), fy = Math.floor(y), fz = Math.floor(z);
+    const X = fx & 255, Y = fy & 255, Z = fz & 255;
+    x -= fx; y -= fy; z -= fz;
+    const u = fade(x), v = fade(y), w = fade(z);
+    const A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z, B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+    return lerp(
+      lerp(lerp(grad(p[AA] & 15, x, y, z), grad(p[BA] & 15, x - 1, y, z), u),
+           lerp(grad(p[AB] & 15, x, y - 1, z), grad(p[BB] & 15, x - 1, y - 1, z), u), v),
+      lerp(lerp(grad(p[AA + 1] & 15, x, y, z - 1), grad(p[BA + 1] & 15, x - 1, y, z - 1), u),
+           lerp(grad(p[AB + 1] & 15, x, y - 1, z - 1), grad(p[BB + 1] & 15, x - 1, y - 1, z - 1), u), v), w);
+  };
+}
+function fbm(noise, x, y, z, oct) {
+  let s = 0, a = 0.5, f = 1;
+  for (let i = 0; i < oct; i++) { s += a * noise(x * f, y * f, z); a *= 0.5; f *= 2; }
+  return s;
+}
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const smoothstep = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+function offscreen(w, h) {
+  const c = document.createElement('canvas');
+  c.width = Math.ceil(w * DPR); c.height = Math.ceil(h * DPR);
+  const g = c.getContext('2d'); g.scale(DPR, DPR);
+  return [c, g];
+}
+
+// Banda galáctica diagonal (0..1): concentra estrellas y humo, como la Vía Láctea
+function band(u, v) {
+  const d = (v - 0.5) + (u - 0.5) * 0.42;
+  return Math.exp(-(d * d) / (2 * 0.17 * 0.17));
+}
+
+// Humo de galaxia en grises: ruido fbm con deformación de dominio, a baja resolución
+function makeSmoke(w, h, seedOffset, strength) {
+  const scale = 5, sw = Math.ceil(w / scale), sh = Math.ceil(h / scale);
+  const c = document.createElement('canvas'); c.width = sw; c.height = sh;
+  const g = c.getContext('2d'), img = g.createImageData(sw, sh), d = img.data;
+  const noise = makeNoise(mulberry32(CONFIG.seed + seedOffset));
+  const k = 2.4 / sh;
+  for (let y = 0, i = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++, i += 4) {
+      const nx = x * k, ny = y * k;
+      const qx = fbm(noise, nx, ny, 0.3, 4), qy = fbm(noise, nx + 5.2, ny + 1.3, 0.3, 4);
+      const v = smoothstep(-0.08, 0.5, fbm(noise, nx + 1.9 * qx, ny + 1.9 * qy, 2.7, 5));
+      const a = v * v * (0.18 + 0.82 * band(x / sw, y / sh)) * strength;
+      const shade = 140 + 70 * v;
+      d[i] = shade; d[i + 1] = shade; d[i + 2] = shade + 8; d[i + 3] = Math.min(255, a * 255);
+    }
+  }
+  g.putImageData(img, 0, 0);
+  return c;
+}
+
+// Sprite de estrella suave, reutilizado para todo lo que brilla por cuadro
+function makeSprite() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)');
+  gr.addColorStop(0.12, 'rgba(255,255,255,0.85)');
+  gr.addColorStop(0.3, 'rgba(225,232,255,0.22)');
+  gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return c;
+}
+function makeVignette() {
+  const [c, g] = offscreen(W, H);
+  const gr = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.hypot(W, H) * 0.6);
+  gr.addColorStop(0, 'rgba(0,0,0,0)');
+  gr.addColorStop(1, 'rgba(0,0,0,0.6)');
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  return c;
+}
+
+// Capas de estrellas: lejana (pequeña, tenue, se mueve poco) a cercana (grande, se mueve más)
+const LAYERS = [
+  { depth: 0.18, n: 2400, rMin: 0.35, rMax: 0.85, aMin: 0.3, aMax: 0.7 },
+  { depth: 0.45, n: 700, rMin: 0.5, rMax: 1.25, aMin: 0.45, aMax: 0.9 },
+  { depth: 0.9, n: 110, rMin: 0.8, rMax: 2.1, aMin: 0.6, aMax: 1 },
+];
+function makeStars(L, rand) {
+  const [c, g] = offscreen(TW, TH);
+  const count = Math.round(L.n * AREA * CONFIG.densidad), list = [];
+  for (let i = 0; i < count; i++) {
+    const x = rand() * TW, y = rand() * TH;
+    const r = L.rMin + Math.pow(rand(), 3) * (L.rMax - L.rMin);
+    const a = Math.min(1, (L.aMin + rand() * (L.aMax - L.aMin)) * CONFIG.brillo);
+    if (rand() > 0.45 + 0.55 * band(x / TW, y / TH)) continue; // más densidad dentro de la banda
+    list.push({ x, y, r, a });
+    if (r > 1.1) {
+      g.globalAlpha = a; g.drawImage(sprite, x - r * 2.5, y - r * 2.5, r * 5, r * 5);
+    } else {
+      g.globalAlpha = 1; g.fillStyle = `rgba(255,255,255,${a})`;
+      g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+    }
+  }
+  g.globalAlpha = 1;
+  return { ...L, canvas: c, list };
+}
+function pickTwinkles(rand, from, n) {
+  const out = [];
+  for (let i = 0; i < n && from.length; i++) {
+    const s = from[Math.floor(rand() * from.length)];
+    out.push({ ...s, f: 0.6 + rand() * 1.8, ph: rand() * TAU });
+  }
+  return out;
+}
+
+// Desplazamiento de parallax para una profundidad dada (0 = fijo, 1 = máximo)
+const offX = depth => -M - mouse.x * CONFIG.parallax * depth;
+const offY = depth => -M - mouse.y * CONFIG.parallax * depth;
+function drawLayer(img, depth, dx = 0, dy = 0) {
+  ctx.drawImage(img, offX(depth) + dx, offY(depth) + dy, TW, TH);
+}
+function drawTwinkles(t, depth) {
+  const ox = offX(depth), oy = offY(depth);
+  for (const s of twinkles) {
+    const a = s.a * 0.7 * (0.5 + 0.5 * Math.sin(t * s.f * 3 + s.ph));
+    if (a < 0.02) continue;
+    const r = s.r * 3.2;
+    ctx.globalAlpha = a;
+    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = innerWidth; H = innerHeight;
+  M = CONFIG.parallax + 32;
+  TW = W + 2 * M; TH = H + 2 * M;
+  AREA = (TW * TH) / (1920 * 1080);
+  canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  sprite = makeSprite();
+  vignette = makeVignette();
+  build();
+}
+
+// El mouse solo se usa como destino; la posición real lo sigue con suavizado
+addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  mouse.tx = e.clientX / W * 2 - 1; mouse.ty = e.clientY / H * 2 - 1;
+});
+document.addEventListener('mouseout', e => { if (!e.relatedTarget) mouse.tx = mouse.ty = 0; });
+let resizeTimer;
+addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (listo) resize(); }, 150); });
+
+let last = 0, time = 0, activo = false, raf = 0, listo = false;
+function loop(now) {
+  const real = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+  const k = REDUCE ? 0.15 : 1;
+  const dt = real * CONFIG.velocidad * k;
+  time += dt;
+  const follow = REDUCE ? 0 : Math.min(1, real * 2.4);
+  mouse.x += ((REDUCE ? 0 : mouse.tx) - mouse.x) * follow;
+  mouse.y += ((REDUCE ? 0 : mouse.ty) - mouse.y) * follow;
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  frame(time, dt);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.drawImage(vignette, 0, 0, W, H);
+  if (activo) raf = requestAnimationFrame(loop);
+}
+function preparar() {
+  if (listo) return;
+  listo = true; resize();
+}
+function mostrar() {
+  preparar();
+  canvas.classList.remove('oculto');
+  if (!activo) { activo = true; last = 0; raf = requestAnimationFrame(loop); }
+}
+function ocultar() {
+  canvas.classList.add('oculto');
+  setTimeout(() => { if (canvas.classList.contains('oculto')) { activo = false; cancelAnimationFrame(raf); } }, 900);
+}
+
+
+let smoke, bright, crand, active, nextAt;
+const DEPTH_BRIGHT = 0.7;
+
+function build() {
+  const rand = mulberry32(CONFIG.seed);
+  sprite = makeSprite();
+  stars = LAYERS.slice(0, 2).map(L => makeStars(L, rand));
+  twinkles = pickTwinkles(rand, stars[1].list, 50);
+  smoke = makeSmoke(TW, TH, 73, CONFIG.humo);
+  const n = Math.round(CONFIG.estrellasBrillantes * AREA * CONFIG.densidad);
+  bright = Array.from({ length: n }, () => ({
+    x: rand() * TW, y: rand() * TH,
+    r: 0.8 + Math.pow(rand(), 2.5) * 1.4,
+    a: Math.min(1, (0.55 + rand() * 0.45) * CONFIG.brillo),
+    f: 0.4 + rand() * 1.2, ph: rand() * TAU, glow: 0,
+  }));
+  crand = mulberry32(CONFIG.seed + 99);
+  active = [];
+  nextAt = 0.8;
+}
+
+function spawnConstellation(t) {
+  const used = new Set(active.flatMap(c => c.idx));
+  for (let tries = 0; tries < 25; tries++) {
+    const i = Math.floor(crand() * bright.length), s = bright[i];
+    if (used.has(i)) continue;
+    const sx = s.x - M, sy = s.y - M;
+    if (sx < W * 0.08 || sx > W * 0.92 || sy < H * 0.1 || sy > H * 0.9) continue;
+    if (active.some(c => Math.hypot(c.cx - s.x, c.cy - s.y) < CONFIG.radio * 1.6)) continue;
+    const k = 4 + Math.floor(crand() * 4);
+    const near = bright
+      .map((o, j) => ({ j, d: Math.hypot(o.x - s.x, o.y - s.y) }))
+      .filter(o => !used.has(o.j) && o.d < CONFIG.radio)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, k);
+    if (near.length < 4) continue;
+    // Árbol de expansión mínima (Prim): las líneas siempre crecen desde una estrella ya unida
+    const idx = near.map(o => o.j), inTree = [0], edges = [];
+    while (inTree.length < idx.length) {
+      let best = null;
+      for (const a of inTree) for (let b = 0; b < idx.length; b++) {
+        if (inTree.includes(b)) continue;
+        const pa = bright[idx[a]], pb = bright[idx[b]], d = Math.hypot(pa.x - pb.x, pa.y - pb.y);
+        if (!best || d < best.d) best = { a, b, d };
+      }
+      edges.push([idx[best.a], idx[best.b]]);
+      inTree.push(best.b);
+    }
+    active.push({ idx, edges, born: t, cx: s.x, cy: s.y });
+    return;
+  }
+}
+
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+
+function frame(t, dt) {
+  drawLayer(stars[0].canvas, stars[0].depth);
+  drawLayer(smoke, 0.3, Math.sin(t * 0.02) * 14, Math.cos(t * 0.016) * 9);
+  drawLayer(stars[1].canvas, stars[1].depth);
+
+  // ciclo de vida de las constelaciones
+  const T = CONFIG.tiempos, total = T.dibujar + T.mostrar + T.borrar;
+  if (t >= nextAt) {
+    if (active.length < CONFIG.maxConstelaciones) spawnConstellation(t);
+    nextAt = t + CONFIG.intervalo * (0.6 + 0.8 * crand());
+  }
+  active = active.filter(c => t - c.born < total);
+  for (const s of bright) s.glow = 0;
+
+  const ox = offX(DEPTH_BRIGHT), oy = offY(DEPTH_BRIGHT);
+  ctx.lineWidth = 0.8;
+  ctx.lineCap = 'round';
+  for (const c of active) {
+    const age = t - c.born;
+    const alpha = age < T.dibujar + T.mostrar ? 1 : 1 - (age - T.dibujar - T.mostrar) / T.borrar;
+    const grow = clamp(age / T.dibujar) * c.edges.length;
+    ctx.strokeStyle = `rgba(190,204,232,${0.4 * alpha * CONFIG.brillo})`;
+    ctx.beginPath();
+    c.edges.forEach(([ia, ib], i) => {
+      const p = easeOut(clamp(grow - i));
+      if (p <= 0) return;
+      const a = bright[ia], b = bright[ib];
+      ctx.moveTo(a.x + ox, a.y + oy);
+      ctx.lineTo(a.x + ox + (b.x - a.x) * p, a.y + oy + (b.y - a.y) * p);
+      bright[ia].glow = Math.max(bright[ia].glow, alpha);
+      if (p >= 1) bright[ib].glow = Math.max(bright[ib].glow, alpha);
+    });
+    ctx.stroke();
+  }
+
+  // estrellas brillantes: titilan y se encienden cuando forman parte de una figura
+  for (const s of bright) {
+    const tw = 0.75 + 0.25 * Math.sin(t * s.f * 2.2 + s.ph);
+    const r = s.r * (2.6 + s.glow * 1.6);
+    ctx.globalAlpha = Math.min(1, s.a * tw + s.glow * 0.35);
+    ctx.drawImage(sprite, s.x + ox - r, s.y + oy - r, r * 2, r * 2);
+  }
+  ctx.globalAlpha = 1;
+  drawTwinkles(t, stars[1].depth);
+}
+
+setTimeout(preparar, 2500);
+return { mostrar, ocultar };
+})();
 
 /* ================= Estrellas con parallax ================= */
 (function(){
@@ -1538,64 +2516,6 @@ bloqueo.focus();
   }
   generarNebulosa();
 
-  /* ---- Andrómeda (M31) dibujada con código: núcleo cálido, disco azulado, franja de polvo y M110 ---- */
-  const andro = document.getElementById('andromeda'), fondoEl = document.querySelector('.fondo');
-  let androK = 0, tPrevAndro = null;   // androK: 0 = oculta, 1 = totalmente visible
-  /* La galaxia se dibuja UNA vez "vista de frente" en una textura; en cada cuadro esa textura se gira
-     sobre su propio eje y se aplana/inclina, así los brazos espirales rotan como en una galaxia real. */
-  const androCtx = andro.getContext('2d');
-  const AW = 520, AH = 300, TILT = 28 * Math.PI/180, Q = .36, RT = 240;   // RT = radio de la textura
-  andro.width = AW; andro.height = AH;
-  const texAndro = document.createElement('canvas');
-  (function dibujarTextura(){
-    const n = RT * 2; texAndro.width = texAndro.height = n;
-    const c = texAndro.getContext('2d'), img = c.createImageData(n, n), d = img.data;
-    const hash = (x, y) => { const k = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return k - Math.floor(k); };
-    const ruido = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf*xf*(3-2*xf), v = yf*yf*(3-2*yf);
-      const a = hash(xi, yi), b = hash(xi+1, yi), e = hash(xi, yi+1), f = hash(xi+1, yi+1);
-      return a + (b-a)*u + (e-a)*v + (a-b-e+f)*u*v; };
-    const fbm = (x, y) => { let s = 0, a = .5; for(let o = 0; o < 4; o++){ s += a * ruido(x, y); x *= 2.1; y *= 2.1; a *= .5; } return s; };
-    const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t*t*(3-2*t); };
-    for(let y = 0; y < n; y++) for(let x = 0; x < n; x++){
-      const u = (x - RT) / RT, v = (y - RT) / RT, r = Math.hypot(u, v);
-      if(r > 1.08) continue;
-      const th = Math.atan2(v, u);
-      const fase = 2*th - Math.log(r + .02) * 5.5 + fbm(u*3, v*3) * 1.8;          // dos brazos espirales
-      const brazos = .5 + .5 * Math.sin(fase);
-      const grumos = .55 + .9 * fbm(u * 9 + 3, v * 9);
-      const disco = (Math.exp(-r / .36) + .18 * Math.exp(-r / .9)) * (1 - sm(.85, 1.08, r)) * (.42 + .58 * brazos) * grumos;
-      const nucleo = Math.exp(-((r / .06) ** 2)) * .6 + Math.exp(-((r / .22) ** 2)) * .3;
-      // polvo oscuro siguiendo el borde interior de cada brazo
-      const polvo = 1 - .62 * Math.pow(.5 + .5 * Math.sin(fase - 1.15), 6) * sm(.14, .32, r) * (1 - sm(.8, 1, r)) * (.6 + .6 * fbm(u*12, v*12));
-      const I = (disco * .95 + nucleo) * polvo;
-      if(I <= .004) continue;
-      const t = sm(.04, .55, r), i = (y*n + x) * 4;
-      d[i] = 245 - 115*t; d[i+1] = 218 - 56*t; d[i+2] = 176 + 52*t; d[i+3] = Math.min(225, I * 250);
-    }
-    c.putImageData(img, 0, 0);
-    // regiones azules de formación estelar sobre los brazos (giran con la galaxia)
-    let semilla = 31; const rnd = () => (semilla = (semilla * 16807) % 2147483647) / 2147483647;
-    for(let k = 0; k < 320; k++){
-      const r = .25 + rnd() * .72, th = rnd() * 6.283;
-      c.globalAlpha = .15 + rnd() * .35; c.fillStyle = rnd() < .75 ? '#a9c4ff' : '#ffffff';
-      c.beginPath(); c.arc(RT + r * Math.cos(th) * RT, RT + r * Math.sin(th) * RT, .6 + rnd() * 1.1, 0, 6.283); c.fill();
-    }
-    c.globalAlpha = 1;
-  })();
-  function mancha(c, x, y, rx, ry, rot, a){
-    c.save(); c.translate(x, y); c.rotate(rot); c.scale(1, ry/rx);
-    const g = c.createRadialGradient(0, 0, 0, 0, 0, rx); g.addColorStop(0, `rgba(235,232,255,${a})`); g.addColorStop(1, 'rgba(160,170,220,0)');
-    c.fillStyle = g; c.beginPath(); c.arc(0, 0, rx, 0, 6.283); c.fill(); c.restore();
-  }
-  function pintarAndromeda(giro){
-    const c = androCtx; c.clearRect(0, 0, AW, AH);
-    c.save(); c.translate(AW/2, AH/2); c.rotate(TILT); c.scale(1, Q); c.rotate(giro);   // inclina, aplana y gira el disco
-    const esc = (AW * .46) / RT; c.scale(esc, esc);
-    c.drawImage(texAndro, -RT, -RT); c.restore();
-    mancha(c, AW/2 - 40, AH/2 + 105, 15, 8, 1.15, .75);   // M110
-    mancha(c, AW/2 - 38, AH/2 - 50, 5, 5, 0, .9);         // M32
-  }
-  pintarAndromeda(0);
   function crear(){
     dpr = Math.min(devicePixelRatio||1, tactil ? 1.5 : 2);
     W = cv.width = innerWidth*dpr; H = cv.height = innerHeight*dpr;
@@ -1610,6 +2530,12 @@ bloqueo.focus();
     if(t - ultimo < MS_CUADRO){ requestAnimationFrame(cuadro); return; }
     ultimo = t;
     cx += (mx-cx)*.06; cy += (my-cy)*.06;
+    // cada pantalla tiene su universo encima; mientras uno se vea, este cielo no se redibuja (solo se mueve el logo)
+    if(document.querySelector('.fondo canvas[id^="universo"]:not(.oculto)')){
+      logo.style.transform = `translate(calc(-50% + ${-cx*14}px), calc(-50% + ${-cy*14}px))`;
+      if(!quieto) requestAnimationFrame(cuadro);
+      return;
+    }
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle = '#fff';
     gActiva += (gObjetivo - gActiva) * .08;   // la gravedad aparece y se apaga suavemente
@@ -1641,17 +2567,6 @@ bloqueo.focus();
     if(!quieto) dibujarCometa(t);
     nb.style.transform = `translate(${-cx*12}px, ${-cy*12}px) scale(${1+.015*Math.sin(t/9000)})`;
     logo.style.transform = `translate(calc(-50% + ${-cx*14}px), calc(-50% + ${-cy*14}px))`;
-    if(!quieto){   // con "reducir movimiento" la galaxia se muestra fija (la controla el CSS)
-    const dtA = tPrevAndro === null ? 0 : Math.min(100, t - tPrevAndro); tPrevAndro = t;
-    const visible = fondoEl.classList.contains('con-andromeda');
-    androK = Math.min(1, Math.max(0, androK + (visible ? dtA / 7000 : -dtA / 1500)));
-    const e = androK * androK * (3 - 2 * androK);   // suavizado
-    andro.style.opacity = (e * (.75 + .03 * Math.sin(t / 7000))).toFixed(3);   // ~0.75: parte del mismo cielo
-    andro.style.filter = `blur(${(.5 + 2.5 * (1 - e)).toFixed(2)}px)`;
-    if(androK > 0) pintarAndromeda(-t / 1000 * .09);   // una vuelta cada ~70 s: lento pero se nota
-    andro.style.transform = `translate(${-cx*4 + Math.sin(t/11000)*16}px, ${-cy*4 + Math.sin(t/8000)*10}px) ` +
-      `rotate(${Math.sin(t/12000)*3}deg) scale(${(.78 + .22*e) * (1 + .03*Math.sin(t/9000))})`;
-    }
     if(!quieto) requestAnimationFrame(cuadro);
   }
   addEventListener('pointermove', e => { mx = e.clientX/innerWidth*2-1; my = e.clientY/innerHeight*2-1;
