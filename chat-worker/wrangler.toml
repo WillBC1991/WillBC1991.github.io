@@ -1,0 +1,14 @@
+name = "pregunta-a-will"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Sitios que pueden usar el chat. "localhost" = pruebas en tu computadora.
+ORIGENES = "https://willbc1991.github.io,localhost"
+
+# Máximo 8 preguntas por minuto por visitante (por IP)
+[[ratelimits]]
+name = "LIMITE"
+namespace_id = "1991"
+simple = { limit = 8, period = 60 }
