@@ -1683,6 +1683,82 @@ bloqueo.focus();
    Galaxia espiral vista de lado con brazos sobre una espiral logarítmica; el núcleo gira un poco más rápido
    que el disco. Estrellas blancas en 3 capas, humo gris y parallax suave con el mouse. Semilla fija:
    siempre se ve igual. Al entrar al escritorio se desvanece y queda el cielo con constelaciones. */
+/* ================= Estrellas brillantes simultáneas =================
+   Varias estrellas grandes con destellos en cruz que se encienden y se apagan a destiempo,
+   así siempre hay algunas brillando a la vez. Las usan los tres fondos (bloqueo, login y escritorio). */
+const destellos = (function(){
+  const CONFIG = {
+    cantidad: 2,           // cuántas pueden verse a la vez (en pantallas chicas, una)
+    vida: [5, 9],          // segundos que dura cada una (encender + brillar + apagar)
+    tamano: [0.7, 1.5],    // escala de cada estrella
+    rayos: 46,             // largo base (px) de los destellos en cruz
+    deriva: { vx: -10, vy: 3.5 },   // px/s, en la misma dirección que avanza el cielo
+  };
+  const TAU = Math.PI * 2;
+  const estados = new WeakMap();   // cada canvas lleva su propia lista
+  let halo, rayo;
+
+  function sprites(){
+    halo = document.createElement('canvas'); halo.width = halo.height = 128;
+    let g = halo.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, 'rgba(255,255,255,1)');
+    gr.addColorStop(0.06, 'rgba(255,255,255,0.95)');
+    gr.addColorStop(0.18, 'rgba(230,236,255,0.35)');
+    gr.addColorStop(0.45, 'rgba(210,220,255,0.08)');
+    gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+    rayo = document.createElement('canvas'); rayo.width = 256; rayo.height = 8;
+    g = rayo.getContext('2d'); gr = g.createLinearGradient(0, 0, 256, 0);
+    gr.addColorStop(0, 'rgba(255,255,255,0)');
+    gr.addColorStop(0.5, 'rgba(255,255,255,1)');
+    gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr;
+    g.beginPath(); g.moveTo(0, 4); g.quadraticCurveTo(128, 0, 256, 4); g.quadraticCurveTo(128, 8, 0, 4); g.fill();
+  }
+
+  const entre = ([a, b]) => a + Math.random() * (b - a);
+  function nueva(W, H, t, adelantada){
+    const vida = entre(CONFIG.vida);
+    return { x: W * (0.06 + Math.random() * 0.88), y: H * (0.08 + Math.random() * 0.8),
+      nace: t - (adelantada ? Math.random() * vida : 0), vida, esc: entre(CONFIG.tamano),
+      giro: (Math.random() - 0.5) * 0.5, ph: Math.random() * TAU };
+  }
+
+  function pintar(ctx, t, W, H){
+    if(!halo) sprites();
+    const n = W < 720 ? 1 : CONFIG.cantidad;
+    let lista = estados.get(ctx.canvas);
+    if(!lista){ lista = Array.from({length: n}, () => nueva(W, H, t, true)); estados.set(ctx.canvas, lista); }   // empiezan a destiempo
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for(let i = 0; i < lista.length; i++){
+      let s = lista[i], p = (t - s.nace) / s.vida;
+      if(p >= 1 || p < 0){ s = lista[i] = nueva(W, H, t, false); p = 0; }
+      const e = Math.pow(Math.sin(Math.PI * p), 2) * (0.88 + 0.12 * Math.sin(t * 6 + s.ph));   // se enciende, brilla y se apaga
+      if(e < 0.01) continue;
+      const vivo = t - s.nace;
+      const x = s.x + vivo * CONFIG.deriva.vx, y = s.y + vivo * CONFIG.deriva.vy;
+      const R = 26 * s.esc, L = CONFIG.rayos * s.esc * (0.6 + 0.4 * e);
+      ctx.globalAlpha = e * 0.9;
+      ctx.drawImage(halo, x - R, y - R, R * 2, R * 2);
+      ctx.save(); ctx.translate(x, y); ctx.rotate(s.giro);
+      ctx.globalAlpha = e * 0.85;
+      ctx.drawImage(rayo, -L, -1.2, L * 2, 2.4);
+      ctx.drawImage(rayo, -L * 0.8, -1, L * 1.6, 2);   // refuerzo del centro
+      ctx.rotate(Math.PI / 2);
+      ctx.drawImage(rayo, -L * 0.85, -1.2, L * 1.7, 2.4);
+      ctx.rotate(Math.PI / 4);
+      ctx.globalAlpha = e * 0.35;
+      ctx.drawImage(rayo, -L * 0.4, -0.8, L * 0.8, 1.6);
+      ctx.rotate(Math.PI / 2);
+      ctx.drawImage(rayo, -L * 0.4, -0.8, L * 0.8, 1.6);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+  return { pintar };
+})();
+
 const universoInicio = (function(){
 // Una galaxia espiral vista de lado, con brazos trazados sobre una espiral logarítmica.
 // El núcleo gira un poco más rápido que el disco (rotación diferencial), así que la
@@ -1917,6 +1993,7 @@ function loop(now) {
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
   frame(time, dt);
+  destellos.pintar(ctx, time, W, H);
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   ctx.drawImage(vignette, 0, 0, W, H);
   if (activo) raf = requestAnimationFrame(loop);
@@ -2293,6 +2370,7 @@ function loop(now) {
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
   frame(time, dt);
+  destellos.pintar(ctx, time, W, H);
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   ctx.drawImage(vignette, 0, 0, W, H);
   if (activo) raf = requestAnimationFrame(loop);
@@ -2613,6 +2691,7 @@ function loop(now) {
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
   frame(time, dt);
+  destellos.pintar(ctx, time, W, H);
   ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   ctx.drawImage(vignette, 0, 0, W, H);
   if (activo) raf = requestAnimationFrame(loop);
