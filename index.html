@@ -290,6 +290,15 @@ body.en-escritorio.fondo-imagen .fondo .logo{opacity:.5;filter:brightness(3) dro
 /* Sobre mí */
 .perfil{display:flex;gap:20px;align-items:center;margin-bottom:1.4rem}
 .perfil .avatar{width:84px;height:84px;font-size:2rem;flex-shrink:0}
+/* Sobre mí: banner de borde a borde y foto encima de su orilla, estilo perfil de LinkedIn */
+.banner{position:relative;margin:-28px -28px 0;height:160px;overflow:hidden}
+.banner img{width:100%;height:100%;display:block;object-fit:cover;object-position:right center}
+.banner::after{content:"";position:absolute;left:0;right:0;bottom:0;height:50px;background:linear-gradient(to bottom, transparent, rgba(14,14,16,.55))}
+.perfil.con-banner{display:block;margin-bottom:1.4rem}
+.perfil.con-banner .avatar{position:relative;width:112px;height:112px;font-size:2.4rem;margin-top:-56px;
+  border:4px solid #0e0e10;box-shadow:0 10px 30px -8px rgba(0,0,0,.8)}
+.perfil.con-banner h3{margin-top:.8rem}
+@media (max-width:520px){ .banner{height:110px} }
 .cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--linea);border:1px solid var(--linea);border-radius:12px;overflow:hidden;margin:1.4rem 0}
 .cifras div{background:rgba(14,14,16,.96);padding:14px 16px}
 .cifras b{display:block;font-family:var(--display);font-size:1.5rem;font-weight:700;color:var(--cempasuchil)}
@@ -475,6 +484,8 @@ body.redimensionando,body.redimensionando *{cursor:nwse-resize!important;user-se
   .cifras b{font-size:1.15rem}
   .perfil{gap:14px}
   .perfil .avatar{width:64px;height:64px;font-size:1.5rem}
+  .banner{margin:-20px -20px 0}
+  .perfil.con-banner .avatar{width:88px;height:88px;font-size:1.9rem;margin-top:-44px}
   .cuerpo h3{font-size:1.6rem}
 }
 /* Celular horizontal: poca altura */
@@ -945,8 +956,9 @@ document.querySelectorAll('.icono').forEach(b => b.onclick = () => abrir(b.datas
 /* ================= Render de cada app ================= */
 function renderYo(el){
   el.innerHTML = `
-    <div class="perfil"><div class="avatar" data-avatar>${avatarHTML()}</div>
-      <div><h3>${PERFIL.alias}</h3><p class="sub" style="margin:0">${PERFIL.puesto} en ${PERFIL.empresa}</p></div></div>
+    <div class="banner"><img src="img/banner.jpg" alt="Banner: Tecnología. Automatización. Crecimiento."></div>
+    <div class="perfil con-banner"><div class="avatar" data-avatar>${avatarHTML()}</div>
+      <h3>${PERFIL.alias}</h3><p class="sub" style="margin:0">${PERFIL.puesto} en ${PERFIL.empresa}</p></div>
     <p>Construyo las herramientas internas con las que opera una empresa de servicios de nómina en ${PERFIL.ciudad}: portales de RH, dashboards, integraciones con sistemas biométricos y telefonía, y pequeñas utilidades que le ahorran horas al equipo.</p>
     <p>Me gusta encontrar el proceso que alguien hace a mano en Excel y convertirlo en algo que corre solo.</p>
     <div class="cifras">
