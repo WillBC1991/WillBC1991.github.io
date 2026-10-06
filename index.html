@@ -1823,9 +1823,10 @@ const fondoAnimado = (function(){
   };
 })();
 
-/* Fondo del escritorio elegido por el visitante (se recuerda para la próxima visita) */
-let fondoActual = FONDOS.findIndex(f => f.id === leer('will.fondo'));
-if(fondoActual < 0) fondoActual = 0;
+/* Fondo del escritorio: cada inicio de sesión empieza con el predeterminado (FONDOS[0]);
+   el visitante puede cambiarlo mientras está en el escritorio, pero no se guarda */
+let fondoActual = 0;
+try { localStorage.removeItem('will.fondo'); } catch(e){}   // limpia la preferencia que guardaban versiones anteriores
 function mostrarFondoEscritorio(){
   const f = FONDOS[fondoActual];
   document.body.classList.toggle('fondo-imagen', !!f.imagen);   // el brillo del logo depende del fondo
@@ -1841,7 +1842,6 @@ setTimeout(() => { const f = FONDOS[fondoActual]; if(f.imagen) new Image().src =
 function ocultarFondoEscritorio(){ universoEscritorio.ocultar(); fondoAnimado.ocultar(); }
 function cambiarFondo(i){
   fondoActual = (i + FONDOS.length) % FONDOS.length;
-  guardar('will.fondo', FONDOS[fondoActual].id);
   contar('fondo/' + FONDOS[fondoActual].id, 'Fondo: ' + FONDOS[fondoActual].nombre);
   if(estado === 'escritorio' || estado === 'confirmar') mostrarFondoEscritorio();
 }
@@ -1912,7 +1912,7 @@ function entrar(){
   limpiarTimers(); estado = 'escritorio';
   login.classList.remove('on');
   escritorio.classList.add('listo');
-  universoLogin.ocultar(); mostrarFondoEscritorio();   // cada pantalla tiene su fondo; el del escritorio lo elige el visitante
+  universoLogin.ocultar(); fondoActual = 0; mostrarFondoEscritorio();   // cada pantalla tiene su fondo; el del escritorio lo elige el visitante
   sonar('inicio');
   document.body.classList.add('en-escritorio');
   setTimeout(() => {
