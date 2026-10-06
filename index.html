@@ -608,8 +608,8 @@ const SERVICIOS = {
 /* Fondos del escritorio: el primero es el predeterminado. Clic derecho → "Siguiente fondo de escritorio" pasa al siguiente.
    imagen = ruta del archivo (y opcional movil = versión ligera para pantallas chicas); sin imagen = universo animado. */
 const FONDOS = [
-  {id:"universo", nombre:"Universo (animado)"},
   {id:"nubes", nombre:"Nubes y estrellas", imagen:"img/fondo-nubes.jpg", movil:"img/fondo-nubes-movil.jpg"},
+  {id:"universo", nombre:"Universo (animado)"},
 ];
 
 const INICIO_TI = 2014;   // primer puesto en TI (Instituto Mexicano del Petróleo, abril 2014)
@@ -1836,6 +1836,8 @@ function mostrarFondoEscritorio(){
     universoEscritorio.mostrar(); fondoAnimado.ocultar();
   }
 }
+// precarga la imagen del fondo elegido mientras el visitante está en el bloqueo, para que al entrar aparezca sin esperar
+setTimeout(() => { const f = FONDOS[fondoActual]; if(f.imagen) new Image().src = (innerWidth <= 1280 && f.movil) ? f.movil : f.imagen; }, 1200);
 function ocultarFondoEscritorio(){ universoEscritorio.ocultar(); fondoAnimado.ocultar(); }
 function cambiarFondo(i){
   fondoActual = (i + FONDOS.length) % FONDOS.length;
