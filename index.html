@@ -330,6 +330,7 @@ body.en-escritorio.fondo-imagen .fondo .logo{opacity:.5;filter:brightness(3) dro
 .captura{display:block;width:100%;height:120px;object-fit:cover;object-position:center top;background:#f4f5f8;border-bottom:3px solid var(--c)}
 .detalle .captura{height:auto;max-height:340px;object-fit:contain;border:1px solid var(--linea);border-radius:12px;margin-bottom:1.4rem;cursor:zoom-in}
 .detalle .visitar{margin-top:1.4rem}
+.detalle .interno{margin-top:1.2rem;padding:.7rem .9rem;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);font-size:.9em;opacity:.9}
 .vacio{padding:40px 0;color:var(--tenue)}
 
 /* CV */
@@ -644,6 +645,7 @@ const PROYECTOS = [
    texto:"Plataforma de PMO (oficina de gestión de proyectos) para optimizar y dar control a los procesos de la empresa desde un solo lugar, con acceso por usuario y generación de reportes en PDF y Excel. Desplegada en la nube con Google Cloud Run.",
    tech:["PMO","Gestión de proyectos","Google Cloud Run","Reportes PDF / Excel"]},
   {id:"smart-rh", nombre:"Smart RH", color:"#3fb68b", corto:"Intranet de autoservicio para Recursos Humanos",
+   imagen:"img/proyectos/smart-rh.jpg", interno:true,
    texto:"Portal interno donde los colaboradores consultan y gestionan trámites de RH sin depender de correos ni hojas sueltas. Prototipo construido sobre Firebase con acceso por roles.",
    tech:["Firebase","Firestore","Auth por roles","JavaScript"]},
   {id:"clip-bsd", nombre:"Clip-BSD", color:"#ff7a00", corto:"CRM de transacciones de terminales por sucursal",
@@ -1007,6 +1009,7 @@ function renderProyectos(el){
     atras.disabled = false;
     pag.innerHTML = `<div class="detalle">${mock(p, true)}<h3>${p.nombre}</h3><p class="sub">${p.corto}</p>
       <p>${p.texto}</p><h4>Tecnología</h4><div class="chips">${p.tech.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+      ${p.interno ? `<p class="interno">🔒 Uso interno · se ejecuta en un servidor interno de la empresa, solo accesible desde la red de la oficina.</p>` : ''}
       ${p.url ? `<a class="boton visitar" href="${p.url}" target="_blank" rel="noopener">Visitar ${(h => h.length <= 28 ? h : p.nombre)(p.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))} ↗</a>` : ''}</div>`;   // dominios muy largos: se muestra el nombre
     const cap = pag.querySelector('.detalle .captura');
     if(cap) cap.onclick = () => window.open(p.imagen, '_blank', 'noopener');   // ver la captura completa
